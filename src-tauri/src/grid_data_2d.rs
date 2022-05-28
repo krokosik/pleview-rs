@@ -1,5 +1,7 @@
 #![allow(dead_code)]
+use std::cmp::min;
 
+#[derive(Clone)]
 pub struct DimensionData {
     vec: Vec<f64>,
     pub min: f64,
@@ -41,6 +43,7 @@ impl DimensionData {
     }
 }
 
+#[derive(Clone)]
 pub struct GridData2D {
     pub x_data: DimensionData,
     pub y_data: DimensionData,
@@ -143,5 +146,136 @@ impl GridData2D {
                     - self.cumulative[(i - 1) + (j - 1) * self.x_data.vec.len()];
             }
         }
+    }
+
+    pub fn size(&self) -> usize {
+        self.values_data.vec.len()
+    }
+
+    pub fn x_values(&self) -> &Vec<f64> {
+        &self.x_data.vec
+    }
+
+    pub fn y_values(&self) -> &Vec<f64> {
+        &self.y_data.vec
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.values_data.vec.is_empty()
+    }
+
+    pub fn get_1d_index(&self, nx: usize, ny: usize) -> Option<usize> {
+        if nx >= self.x_data.vec.len() || ny >= self.y_data.vec.len() {
+            return None;
+        }
+        Some(nx + ny * self.x_data.vec.len())
+    }
+
+    pub fn get_1d_index_bounded(&self, nx: usize, ny: usize) -> Option<usize> {
+        self.get_1d_index(
+            min(nx, self.x_data.vec.len() - 1),
+            min(ny, self.y_data.vec.len() - 1),
+        )
+    }
+
+    pub fn get_value(&self, nx: usize, ny: usize) -> Option<f64> {
+        let index = self.get_1d_index(nx, ny)?;
+        Some(self.values_data.vec[index])
+    }
+
+    pub fn set_value(&mut self, nx: usize, ny: usize, value: f64) -> Option<()> {
+        let index = self.get_1d_index(nx, ny)?;
+        self.values_data.vec[index] = value;
+        Some(())
+    }
+
+    pub fn get_value_bounded(&self, nx: usize, ny: usize) -> Option<f64> {
+        let index = self.get_1d_index_bounded(nx, ny)?;
+        Some(self.values_data.vec[index])
+    }
+
+    pub fn get_interpolated_value(&self, x: f64, y: f64) -> Option<f64> {
+        if self.is_empty() {
+            return None;
+        }
+
+        let closest_x = self
+            .x_data
+            .vec
+            .binary_search_by(|val| val.partial_cmp(&x).unwrap())
+            .unwrap_or_else(|e| e);
+        let closest_y = self
+            .y_data
+            .vec
+            .binary_search_by(|val| val.partial_cmp(&y).unwrap())
+            .unwrap_or_else(|e| e);
+
+        let second_closest_x = min(closest_x - 1, 0);
+        let second_closest_y = min(closest_y - 1, 0);
+        let ratio_x = self.x_data.vec[closest_x]
+            - x / (self.x_data.vec[closest_x] - self.x_data.vec[second_closest_x]);
+        let ratio_y = self.y_data.vec[closest_y]
+            - y / (self.y_data.vec[closest_y] - self.y_data.vec[second_closest_y]);
+        let inv_ratio_x = 1.0 - ratio_x;
+        let inv_ratio_y = 1.0 - ratio_y;
+
+        let mut result = 0.0;
+        result += inv_ratio_x * inv_ratio_y * self.get_value_bounded(closest_x, closest_y).unwrap();
+        result +=
+            ratio_x * inv_ratio_y * self.get_value_bounded(second_closest_x, closest_y).unwrap();
+        result +=
+            inv_ratio_x * ratio_y * self.get_value_bounded(closest_x, second_closest_y).unwrap();
+        result += ratio_x
+            * ratio_y
+            * self
+                .get_value_bounded(second_closest_x, second_closest_y)
+                .unwrap();
+        Some(result)
+    }
+
+    pub fn value_at(&self, x: f64, y: f64) -> Option<f64> {
+        if self.is_empty() {
+            return None;
+        }
+
+        let closest_x = self
+            .x_data
+            .vec
+            .binary_search_by(|val| val.partial_cmp(&x).unwrap())
+            .unwrap_or_else(|e| e);
+        let closest_y = self
+            .y_data
+            .vec
+            .binary_search_by(|val| val.partial_cmp(&y).unwrap())
+            .unwrap_or_else(|e| e);
+
+        self.get_value(closest_x, closest_y)
+    }
+
+    pub fn sum_in_index_range(&self, range_x: (usize, usize), range_y: (usize, usize)) -> f64 {
+        if self.is_empty() {
+            return 0.0;
+        }
+
+        let range_x = (
+            min(range_x.0, self.x_data.vec.len() - 1),
+            min(range_x.1, self.x_data.vec.len() - 1),
+        );
+        let range_y = (
+            min(range_y.0, self.y_data.vec.len() - 1),
+            min(range_y.1, self.y_data.vec.len() - 1),
+        );
+
+        let mut result = self.cumulative[self.get_1d_index(range_x.1, range_y.1).unwrap()];
+        if range_x.0 != 0 {
+            result -= self.cumulative[self.get_1d_index(range_x.0 - 1, range_y.1).unwrap()];
+        }
+        if range_y.0 != 0 {
+            result -= self.cumulative[self.get_1d_index(range_x.1, range_y.0 - 1).unwrap()];
+        }
+        if range_x.0 != 0 && range_y.0 != 0 {
+            result += self.cumulative[self.get_1d_index(range_x.0 - 1, range_y.0 - 1).unwrap()];
+        }
+        result
     }
 }
