@@ -58,7 +58,7 @@ impl AxisConfiguration<'_> {
         self.expression = ast;
     }
 
-    pub fn values<'a>(&'a mut self, file_values: &'a Vec<f64>) -> Vec<f64> {
+    pub fn values<'a>(&'a self, file_values: &'a Vec<f64>) -> Vec<f64> {
         let t_values: Vec<f64> = match self.axis_type {
             AxisType::FromFile => file_values.clone(),
             AxisType::Natural => (0..file_values.len())
@@ -66,17 +66,19 @@ impl AxisConfiguration<'_> {
                 .collect::<Vec<f64>>(),
         };
 
+        let mut transform = self.transform.clone();
+
         let result: Vec<f64> = t_values
             .iter()
             .enumerate()
             .map(|(index, t)| -> f64 {
                 if self.use_transform {
-                    self.transform
+                    transform
                         .variables
                         .insert("t".to_string(), (*t, false))
                         .unwrap();
 
-                    self.transform
+                    transform
                         .compute(&self.expression)
                         .unwrap_or_else(|_| *file_values.get(index).unwrap())
                 } else {

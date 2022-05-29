@@ -4,8 +4,8 @@ use std::cmp::min;
 #[derive(Clone)]
 pub struct DimensionData {
     vec: Vec<f64>,
-    pub min: f64,
-    pub max: f64,
+    min: f64,
+    max: f64,
 }
 
 impl DimensionData {
@@ -45,9 +45,9 @@ impl DimensionData {
 
 #[derive(Clone)]
 pub struct GridData2D {
-    pub x_data: DimensionData,
-    pub y_data: DimensionData,
-    pub values_data: DimensionData,
+    x_data: DimensionData,
+    y_data: DimensionData,
+    values_data: DimensionData,
     cumulative: Vec<f64>,
 }
 
@@ -152,30 +152,69 @@ impl GridData2D {
         self.values_data.vec.len()
     }
 
+    pub fn cols(&self) -> usize {
+        self.x_data.vec.len()
+    }
+
+    pub fn rows(&self) -> usize {
+        self.y_data.vec.len()
+    }
+
     pub fn x_values(&self) -> &Vec<f64> {
         &self.x_data.vec
+    }
+
+    pub fn set_x_values(&mut self, values: Vec<f64>) {
+        self.x_data.vec = values;
+        self.data_changed();
+    }
+
+    pub fn get_min_x(&self) -> f64 {
+        self.x_data.min
+    }
+
+    pub fn get_max_x(&self) -> f64 {
+        self.x_data.max
     }
 
     pub fn y_values(&self) -> &Vec<f64> {
         &self.y_data.vec
     }
 
+    pub fn set_y_values(&mut self, values: Vec<f64>) {
+        self.y_data.vec = values;
+        self.data_changed();
+    }
+
+    pub fn get_min_y(&self) -> f64 {
+        self.y_data.min
+    }
+
+    pub fn get_max_y(&self) -> f64 {
+        self.y_data.max
+    }
+
     pub fn is_empty(&self) -> bool {
         self.values_data.vec.is_empty()
     }
 
+    pub fn get_min_value(&self) -> f64 {
+        self.values_data.min
+    }
+
+    pub fn get_max_value(&self) -> f64 {
+        self.values_data.max
+    }
+
     pub fn get_1d_index(&self, nx: usize, ny: usize) -> Option<usize> {
-        if nx >= self.x_data.vec.len() || ny >= self.y_data.vec.len() {
+        if nx >= self.cols() || ny >= self.rows() {
             return None;
         }
-        Some(nx + ny * self.x_data.vec.len())
+        Some(nx + ny * self.cols())
     }
 
     pub fn get_1d_index_bounded(&self, nx: usize, ny: usize) -> Option<usize> {
-        self.get_1d_index(
-            min(nx, self.x_data.vec.len() - 1),
-            min(ny, self.y_data.vec.len() - 1),
-        )
+        self.get_1d_index(min(nx, self.cols() - 1), min(ny, self.rows() - 1))
     }
 
     pub fn get_value(&self, nx: usize, ny: usize) -> Option<f64> {
@@ -258,12 +297,12 @@ impl GridData2D {
         }
 
         let range_x = (
-            min(range_x.0, self.x_data.vec.len() - 1),
-            min(range_x.1, self.x_data.vec.len() - 1),
+            min(range_x.0, self.cols() - 1),
+            min(range_x.1, self.cols() - 1),
         );
         let range_y = (
-            min(range_y.0, self.y_data.vec.len() - 1),
-            min(range_y.1, self.y_data.vec.len() - 1),
+            min(range_y.0, self.rows() - 1),
+            min(range_y.1, self.rows() - 1),
         );
 
         let mut result = self.cumulative[self.get_1d_index(range_x.1, range_y.1).unwrap()];
