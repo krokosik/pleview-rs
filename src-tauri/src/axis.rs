@@ -51,9 +51,9 @@ impl AxisConfiguration<'_> {
     }
 
     pub fn set_transform(&mut self, transform: &str) {
-        let tokens: Vec<Token<f64>> = tokenize(transform, true).unwrap_or(get_default_tokens());
+        let tokens: Vec<Token<f64>> = tokenize(transform, true).unwrap_or_else(|_| get_default_tokens());
 
-        let ast: Expr<f64> = parse(&tokens).unwrap_or(get_default_expression());
+        let ast: Expr<f64> = parse(&tokens).unwrap_or_else(|_| get_default_expression());
 
         self.expression = ast;
     }
@@ -86,9 +86,9 @@ impl AxisConfiguration<'_> {
             .collect();
 
         if result.iter().any(|t| t.is_nan() || t.is_infinite()) {
-            return file_values.clone();
+            file_values.clone()
         } else {
-            return result;
+            result
         }
     }
 }

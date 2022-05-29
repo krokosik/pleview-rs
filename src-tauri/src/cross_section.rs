@@ -1,9 +1,11 @@
 #![allow(dead_code)]
 
+use crate::enums::Direction;
+
 #[derive(Clone)]
 pub struct CrossSection {
-    pub central_pixels: [u32; 2],
-    pub width_in_pixels: [u32; 2],
+    central_pixels: [usize; 2],
+    pub width_in_pixels: [usize; 2],
     pub position: [f64; 2],
     pub range_lower: [f64; 2],
     pub range_upper: [f64; 2],
@@ -31,5 +33,20 @@ impl CrossSection {
             self.range_upper[i] = 0.0;
             self.curve[i].clear();
         }
+    }
+
+    pub fn set_central_pixel(&mut self, direction: &Direction, pixel: usize) -> Result<(), String> {
+        let direction = *direction as usize;
+
+        if pixel > self.width_in_pixels[direction] {
+            return Err("Central pixel out of range".to_owned());
+        }
+        self.central_pixels[direction] = pixel;
+
+        Ok(())
+    }
+
+    pub fn get_central_pixel(&self, direction: &Direction) -> usize {
+        self.central_pixels[*direction as usize]
     }
 }

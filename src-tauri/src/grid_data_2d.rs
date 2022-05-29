@@ -17,9 +17,9 @@ impl DimensionData {
         }
     }
 
-    pub fn from(vec: &Vec<f64>) -> Self {
+    pub fn from(vec: &[f64]) -> Self {
         let mut data = DimensionData::new();
-        data.vec = vec.clone();
+        data.vec = vec.to_vec();
         data.find_limits();
         data
     }
@@ -61,7 +61,7 @@ impl GridData2D {
         }
     }
 
-    fn from(xs: &Vec<f64>, ys: &Vec<f64>, values: &Vec<f64>) -> Result<Self, String> {
+    fn from(xs: &[f64], ys: &[f64], values: &[f64]) -> Result<Self, String> {
         if xs.len() * ys.len() != values.len() {
             return Err(
                 "The number of values must be equal to the number of x times y values".to_owned(),
