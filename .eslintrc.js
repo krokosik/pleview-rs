@@ -42,115 +42,35 @@ module.exports = {
         argsIgnorePattern: '^_',
       },
     ],
-    'constructor-super': 'error',
-    curly: 'error',
-    'default-param-last': 'off',
-    eqeqeq: ['error', 'smart'],
-    'guard-for-in': 'error',
     'id-blacklist': ['warn', 'any', 'Number', 'number', 'String', 'string', 'Boolean', 'boolean', 'Undefined', 'undefined'],
-    'id-match': 'error',
-    'import/order': 'error',
-    'new-parens': 'error',
-    'no-bitwise': 'error',
-    'no-caller': 'error',
-    'no-cond-assign': 'error',
     'no-console': [
       'warn',
       {
         allow: ['warn', 'error'],
       },
     ],
-    'no-debugger': 'error',
-    'no-eval': 'error',
-    'no-new-wrappers': 'error',
-    'no-throw-literal': 'error',
-    'no-undef-init': 'error',
-    'no-unsafe-finally': 'error',
-    'no-unused-labels': 'error',
-    'no-unused-vars': 'off',
-    'no-use-before-define': 'off',
-    'no-var': 'error',
-    'object-shorthand': 'error',
-    'one-var': ['error', 'never'],
     'prefer-arrow/prefer-arrow-functions': 'error',
-    'prefer-const': 'error',
-    radix: 'error',
-    'use-isnan': 'error',
-    'arrow-body-style': ['error', 'as-needed'],
-    'no-param-reassign': [
-      'error',
-      {
-        props: true,
-        ignorePropertyModificationsFor: ['state'],
-      },
-    ],
     'no-return-assign': ['error', 'except-parens'],
     'no-plusplus': 'off',
     'no-void': 'off',
     'import/no-extraneous-dependencies': 'off',
     'import/prefer-default-export': 'off',
     'react/function-component-definition': 'off',
-    'generator-star-spacing': [
-      'error',
-      {
-        before: true,
-        after: true,
-      },
-    ],
-    'jsx-a11y/aria-props': 'error',
-    'jsx-a11y/label-has-for': 'error',
-    'jsx-a11y/mouse-events-have-key-events': 'error',
-    'jsx-a11y/role-has-required-aria-props': 'error',
-    'jsx-a11y/role-supports-aria-props': 'error',
-    'prefer-template': 'error',
     'react/jsx-props-no-spreading': 'off',
     'react/require-default-props': 'off',
-    'react/sort-comp': [
-      'error',
-      {
-        order: ['static-methods', 'lifecycle', 'everything-else'],
-      },
-    ],
     'react/forbid-prop-types': 'off',
     'react/prop-types': 'off',
-    '@typescript-eslint/adjacent-overload-signatures': 'error',
     '@typescript-eslint/array-type': [
       'error',
       {
         default: 'array-simple',
       },
     ],
-    '@typescript-eslint/await-thenable': 'error',
     '@typescript-eslint/ban-ts-comment': [
       'error',
       {
         'ts-ignore': 'allow-with-description',
         minimumDescriptionLength: 10,
-      },
-    ],
-    '@typescript-eslint/ban-types': [
-      'error',
-      {
-        types: {
-          Object: {
-            message: 'Avoid using the `Object` type. Did you mean `object`?',
-          },
-          Function: {
-            message: 'Avoid using the `Function` type. Prefer a specific function type, like `() => void`.',
-          },
-          Boolean: {
-            message: 'Avoid using the `Boolean` type. Did you mean `boolean`?',
-          },
-          Number: {
-            message: 'Avoid using the `Number` type. Did you mean `number`?',
-          },
-          String: {
-            message: 'Avoid using the `String` type. Did you mean `string`?',
-          },
-          Symbol: {
-            message: 'Avoid using the `Symbol` type. Did you mean `symbol`?',
-          },
-        },
       },
     ],
     '@typescript-eslint/consistent-type-assertions': 'error',
@@ -166,15 +86,9 @@ module.exports = {
         },
       },
     ],
-    '@typescript-eslint/indent': 'off',
-    '@typescript-eslint/member-ordering': 'off',
     '@typescript-eslint/naming-convention': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-empty-interface': 'off',
-    '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/no-floating-promises': 'error',
-    '@typescript-eslint/no-inferrable-types': 'off',
-    '@typescript-eslint/no-misused-new': 'error',
     '@typescript-eslint/no-misused-promises': [
       'error',
       {
@@ -182,17 +96,13 @@ module.exports = {
         checksConditionals: false,
       },
     ],
-    '@typescript-eslint/no-namespace': 'error',
     '@typescript-eslint/no-non-null-assertion': 'off',
-    '@typescript-eslint/no-parameter-properties': 'off',
     '@typescript-eslint/no-shadow': [
       'error',
       {
         hoist: 'all',
       },
     ],
-    '@typescript-eslint/no-this-alias': 'error',
-    '@typescript-eslint/no-unnecessary-type-assertion': 'error',
     '@typescript-eslint/explicit-module-boundary-types': [
       'error',
       {
@@ -200,7 +110,6 @@ module.exports = {
         allowHigherOrderFunctions: true,
       },
     ],
-    '@typescript-eslint/no-unsafe-assignment': 'warn',
     '@typescript-eslint/no-unused-expressions': [
       'error',
       {
@@ -211,12 +120,8 @@ module.exports = {
     '@typescript-eslint/no-unsafe-member-access': 'warn',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
-    '@typescript-eslint/no-var-requires': 'error',
     '@typescript-eslint/prefer-for-of': 'error',
     '@typescript-eslint/prefer-function-type': 'error',
-    '@typescript-eslint/prefer-namespace-keyword': 'error',
-    '@typescript-eslint/prefer-regexp-exec': 'off',
-    '@typescript-eslint/require-await': 'off',
     '@typescript-eslint/restrict-plus-operands': 'warn',
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/unbound-method': 'off',
