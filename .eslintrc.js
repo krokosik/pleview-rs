@@ -4,6 +4,7 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'plugin:@blueprintjs/recommended',
     'airbnb',
     'airbnb-typescript',
     'plugin:react/jsx-runtime',
@@ -14,7 +15,7 @@ module.exports = {
     node: true,
     es6: true,
   },
-  plugins: ['react', 'jsx-a11y', 'eslint-plugin-import', 'eslint-plugin-prefer-arrow', '@typescript-eslint', 'unused-imports'],
+  plugins: ['react', 'jsx-a11y', 'eslint-plugin-import', 'eslint-plugin-prefer-arrow', '@typescript-eslint', 'unused-imports', '@blueprintjs'],
   globals: {
     __DEV__: 'readonly',
     module: 'readonly',
