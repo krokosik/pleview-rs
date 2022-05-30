@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { App } from './App';
+import { App } from './components/App';
 
 import 'normalize.css';
 import '@blueprintjs/core/lib/css/blueprint.css';
