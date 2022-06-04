@@ -1,6 +1,6 @@
 import { Alignment, Button, Tabs, Navbar as BpNavbar } from '@blueprintjs/core';
 import { FC } from 'react';
-import { Visualizations } from '../../enums';
+import { Visualizations } from '../enums';
 
 export interface NavbarProps {
     viz: Visualizations;

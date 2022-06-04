@@ -13,7 +13,10 @@
     "@blueprintjs/icons": "^4.3.0",
     "@tauri-apps/api": "^1.0.0-rc.5",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "vega": "^5.22.1",
+    "vega-embed": "^6.20.8",
+    "vega-lite": "^5.2.0"
   },
   "devDependencies": {
     "@blueprintjs/eslint-plugin": "^2.0.1",
