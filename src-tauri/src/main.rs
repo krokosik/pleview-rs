@@ -8,9 +8,11 @@ mod cross_section;
 mod engine;
 mod enums;
 mod grid_data_2d;
+mod menu;
 
 fn main() {
     tauri::Builder::default()
+        .menu(menu::create_menu())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
