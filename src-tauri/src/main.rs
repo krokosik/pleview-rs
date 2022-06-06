@@ -13,6 +13,7 @@ mod menu;
 fn main() {
     tauri::Builder::default()
         .menu(menu::create_menu())
+        .on_menu_event(menu::menu_event_handler)
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 

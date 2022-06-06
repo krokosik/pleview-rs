@@ -1,10 +1,18 @@
-use tauri::{CustomMenuItem, Menu, MenuItem, Submenu};
+use tauri::{CustomMenuItem, Menu, MenuItem, Submenu, WindowMenuEvent};
 
 pub fn create_menu() -> Menu {
     Menu::new()
         .add_submenu(create_file_submenu())
         .add_submenu(create_edit_submenu())
         .add_submenu(create_help_submenu())
+}
+
+pub fn menu_event_handler(event: WindowMenuEvent) {
+    let _window = event.window();
+
+    // match event.menu_item_id() {
+    //     _ => {}
+    // };
 }
 
 fn create_file_submenu() -> Submenu {

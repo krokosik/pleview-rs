@@ -11,7 +11,7 @@ export interface VizProps {
 
 export const Viz: FC<VizProps> = ({ viz }) => {
     useEffect(() => {
-        void vegaEmbedModule('#viz', schemas[viz], { actions: false });
+        void vegaEmbedModule('#viz', schemas[viz]);
     }, [viz]);
 
     return <Card id="viz" interactive></Card>;
