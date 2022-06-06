@@ -14,5 +14,5 @@ export const Viz: FC<VizProps> = ({ viz }) => {
         void vegaEmbedModule('#viz', schemas[viz]);
     }, [viz]);
 
-    return <Card id="viz" interactive></Card>;
+    return <Card id="viz" elevation={3}></Card>;
 };
