@@ -2,16 +2,13 @@ import { Classes } from '@blueprintjs/core';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './components/App';
-import { listen } from '@tauri-apps/api/event';
-import { DialogFilter, message, open, save } from '@tauri-apps/api/dialog';
-import { documentDir } from '@tauri-apps/api/path';
-import { readTextFile, writeFile } from '@tauri-apps/api/fs';
+import { TauriUtils } from './utils';
 
 import './global.css';
 import 'normalize.css';
 import '@blueprintjs/core/lib/css/blueprint.css';
 
-const asciiFilter: DialogFilter = { name: 'Ascii', extensions: ['txt', 'dat'] };
+await TauriUtils.initMenuListeners();
 
 listen('tauri://menu', async (e) => {
     let filePath: string;
