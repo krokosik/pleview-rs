@@ -3,7 +3,7 @@ import { Visualizations } from './enums';
 const FIELD_STEP = 1;
 const WAVELENGTH_STEP = 10;
 
-const schemas: Record<Visualizations, any> = {
+const schemas: Record<Visualizations, Record<string, unknown>> = {
     [Visualizations.CrossSections]: {
         background: 'transparent',
         config: {

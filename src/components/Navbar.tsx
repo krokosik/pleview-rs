@@ -1,11 +1,19 @@
-import { Alignment, Button, Tabs, Navbar as BpNavbar } from '@blueprintjs/core';
+import { Alignment, Navbar as BpNavbar, Button, ButtonProps, Tabs } from '@blueprintjs/core';
 import { FC } from 'react';
+import { Tooltip2 } from '@blueprintjs/popover2';
+import { TauriUtils } from '../utils';
 import { Visualizations } from '../enums';
 
 export interface NavbarProps {
     viz: Visualizations;
     setViz: (viz: Visualizations) => void;
 }
+
+const NavbarButton: FC<ButtonProps & { tooltip: string }> = ({ tooltip, ...props }) => (
+    <Tooltip2 content={tooltip} placement="bottom">
+        <Button minimal {...props} />
+    </Tooltip2>
+);
 
 export const Navbar: FC<NavbarProps> = ({ viz, setViz }) => (
     <BpNavbar>
@@ -14,22 +22,22 @@ export const Navbar: FC<NavbarProps> = ({ viz, setViz }) => (
 
             <BpNavbar.Divider />
 
-            <Button minimal icon="document-open" />
-            <Button minimal icon="floppy-disk" />
+            <NavbarButton icon="document-open" onClick={() => TauriUtils.openFile()} tooltip="Open" />
+            <NavbarButton icon="floppy-disk" onClick={() => TauriUtils.saveFile('Hello world!')} tooltip="Save" />
 
             <BpNavbar.Divider />
 
-            <Button minimal icon="duplicate" />
+            <NavbarButton icon="duplicate" tooltip="Copy" />
 
             <BpNavbar.Divider />
 
-            <Button minimal icon="search" />
-            <Button minimal icon="horizontal-inbetween" />
+            <NavbarButton icon="search" tooltip="Zoom mode" />
+            <NavbarButton icon="horizontal-inbetween" tooltip="Marker mode" />
 
             <BpNavbar.Divider />
 
-            <Button minimal icon="wrench" />
-            <Button minimal icon="style" />
+            <NavbarButton icon="wrench" tooltip="Cross-section" />
+            <NavbarButton icon="style" tooltip="Color scale" />
 
             <BpNavbar.Divider />
 
