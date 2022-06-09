@@ -1,4 +1,4 @@
-import { Visualizations } from './enums';
+import { Visualizations } from '../../enums';
 
 const FIELD_STEP = 1;
 const WAVELENGTH_STEP = 10;

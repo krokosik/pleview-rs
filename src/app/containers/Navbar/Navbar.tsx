@@ -1,8 +1,8 @@
 import { Alignment, Navbar as BpNavbar, Button, ButtonProps, Tabs } from '@blueprintjs/core';
 import { FC } from 'react';
 import { Tooltip2 } from '@blueprintjs/popover2';
-import { TauriUtils } from '../utils';
-import { Visualizations } from '../enums';
+import { TauriUtils } from '../../utils';
+import { Visualizations } from '../../enums';
 
 export interface NavbarProps {
     viz: Visualizations;

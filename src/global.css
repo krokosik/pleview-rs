@@ -21,6 +21,16 @@ footer {
     padding: 10px;
 }
 
-.main-container * {
+.main-container div:first-child {
     flex-grow: 1;
+}
+
+.tool-container {
+    box-sizing: content-box;
+    height: 120px;
+}
+
+.main-container .react-colorful {
+    width: 100%;
+    height: 100%;
 }

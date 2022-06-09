@@ -23,6 +23,7 @@
     "no-console": ["warn", { "allow": ["warn", "error"] }],
     "prefer-arrow/prefer-arrow-functions": "error",
     "no-return-assign": ["error", "except-parens"],
+    "no-param-reassign": ["error", { "props": false }],
     "no-plusplus": "off",
     "no-void": "off",
     "import/no-extraneous-dependencies": "off",
