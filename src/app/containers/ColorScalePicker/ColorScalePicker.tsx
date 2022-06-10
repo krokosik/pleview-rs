@@ -1,7 +1,9 @@
-import { Card } from '@blueprintjs/core';
+import { Card, Divider } from '@blueprintjs/core';
 import { FC, useState } from 'react';
+import { RgbColorPicker } from 'react-colorful';
 import { prop, sortBy } from 'remeda';
 import { ColorScalePoint } from '../../models';
+import { ColorForm, PointList } from './components';
 
 export const ColorScalePicker: FC = () => {
     const [palette, setPalette] = useState<ColorScalePoint[]>([
@@ -12,7 +14,13 @@ export const ColorScalePicker: FC = () => {
 
     return (
         <Card elevation={3} className="tool-container">
-            <div style={{ width: '100%', height: '28px', borderRadius: '4px', background: getCssGradient(palette) }} />
+            <div style={{ width: '100%', height: '28px', borderRadius: '4px', background: getCssGradient(palette), flexGrow: 0 }} />
+            <Divider />
+            <div className="tool-container-content">
+                <RgbColorPicker />
+                <ColorForm />
+                <PointList />
+            </div>
         </Card>
     );
 };
