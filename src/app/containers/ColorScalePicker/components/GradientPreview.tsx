@@ -13,11 +13,14 @@ const StyledGradientPreview = styled('div')<{ colors: ColorScalePoint[]; colorIn
     position: relative;
     width: 100%;
     height: 28px;
-    border-radius: 4px;
+    border-radius: 2px;
     flex-grow: 0 !important;
     display: flex;
     align-items: center;
-    margin: 2px 0;
+    margin-top: 4.5px;
+    margin-bottom: 7.5px;
+    box-shadow: 0 0 0 0 rgba(76, 144, 240, 0), 0 0 0 0 rgba(76, 144, 240, 0), 0 0 0 0 rgba(76, 144, 240, 0), inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 1px 0 #8f99a8;
 `;
 
 export const GradientPreview: FC<GradientPreviewProps> = forwardRef<HTMLDivElement>(({ children, ...props }, ref) => {

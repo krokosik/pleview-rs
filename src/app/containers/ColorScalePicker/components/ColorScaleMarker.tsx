@@ -14,15 +14,17 @@ const StyledColorScaleMarker = styled('div')<{ color: string; selected: boolean;
     position: absolute;
     left: 0;
     top: 0;
-    height: 32px;
+    height: 110%;
     width: 1%;
-    transform: translate(${({ offsetInPx }) => offsetInPx}px, -${({ selected }) => (selected ? 1.2 : 1) * 2}px)
+    transform: translate(${({ offsetInPx }) => offsetInPx}px, -${({ selected }) => (selected ? 1.2 : 1) * 10}%)
         scaleY(${({ selected }) => (selected ? 1.2 : 1)});
     transform-origin: center;
     border-width: 2px;
     border-style: solid;
-    border-radius: 4px;
+    border-radius: 2px;
     background-color: ${({ color }) => color};
+    box-shadow: 0 0 0 0 rgba(76, 144, 240, 0), 0 0 0 0 rgba(76, 144, 240, 0), 0 0 0 0 rgba(76, 144, 240, 0), inset 0 0 0 1px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 1px 0 #8f99a8;
 `;
 
 export const ColorScaleMarker: FC<ColorScaleMarkerProps> = ({ point, parentWidth }) => {
