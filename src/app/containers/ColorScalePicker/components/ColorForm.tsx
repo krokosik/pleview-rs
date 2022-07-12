@@ -4,7 +4,7 @@ import { FC } from 'react';
 import { HexColorInput } from 'react-colorful';
 import { useDispatch, useSelector } from 'react-redux';
 import { colorInputSelector, updateColor } from '../color-scale.slice';
-import { ColorUtils } from '../../../utils';
+import { hexToRgb } from '../../../utils';
 
 const StyledColorForm = styled(FormGroup)`
     box-sizing: border-box;
@@ -20,7 +20,7 @@ const StyledHexInput = styled(HexColorInput)`
 export const ColorForm: FC = () => {
     const dispatch = useDispatch();
     const color = useSelector(colorInputSelector);
-    const colorObject = ColorUtils.hexToRgb(color ?? '#000000');
+    const colorObject = hexToRgb(color ?? '#000000');
 
     return (
         <StyledColorForm>

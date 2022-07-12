@@ -35,7 +35,7 @@ export const PointList: FC = () => {
                                     style={{ boxSizing: 'border-box', textAlign: 'center' }}
                                     allowNumericCharactersOnly
                                     clampValueOnBlur
-                                    value={Math.round(point.offset * 100) / 100}
+                                    value={(Math.round(point.offset * 100) + 1) / 100}
                                     max={1}
                                     min={0.01}
                                     majorStepSize={0.1}
