@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { DraggableCore } from 'react-draggable';
 import { useDispatch, useSelector } from 'react-redux';
 import { ColorScalePoint } from '../../../models';
-import { movePoint, removePoint, selectedPointIdSelector, selectPoint } from '../../../store';
+import { movePoint, removePoint, selectedPointIdSelector, selectPoint } from '../color-scale.slice';
 
 export interface ColorScaleMarkerProps {
     point: ColorScalePoint;

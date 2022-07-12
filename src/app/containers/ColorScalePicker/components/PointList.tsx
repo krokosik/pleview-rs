@@ -2,7 +2,7 @@ import { Button, Classes, Colors, HTMLTable, Icon, NumericInput } from '@bluepri
 import { FC } from 'react';
 import { HexColorInput } from 'react-colorful';
 import { useDispatch, useSelector } from 'react-redux';
-import { colorScaleSelector, movePoint, removePoint, selectedPointIdSelector, selectPoint, updateColor } from '../../../store';
+import { colorScaleSelector, movePoint, removePoint, selectedPointIdSelector, selectPoint, updateColor } from '../color-scale.slice';
 
 export const PointList: FC = () => {
     const dispatch = useDispatch();
@@ -35,7 +35,7 @@ export const PointList: FC = () => {
                                     style={{ boxSizing: 'border-box', textAlign: 'center' }}
                                     allowNumericCharactersOnly
                                     clampValueOnBlur
-                                    value={point.offset}
+                                    value={Math.round(point.offset * 100) / 100}
                                     max={1}
                                     min={0.01}
                                     majorStepSize={0.1}

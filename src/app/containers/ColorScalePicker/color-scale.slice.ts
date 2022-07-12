@@ -2,9 +2,9 @@ import { createEntityAdapter, createSelector, createSlice, PayloadAction } from 
 import { nanoid } from 'nanoid';
 import { find, isObject } from 'remeda';
 import type { RgbColor } from 'react-colorful';
-import { ColorScalePoint } from '../models';
-import type { RootState } from '../../store';
-import { ColorUtils } from '../utils';
+import { ColorScalePoint } from '../../models';
+import type { RootState } from '../../../store';
+import { ColorUtils } from '../../utils';
 
 const colorsAdapter = createEntityAdapter<ColorScalePoint>({
     selectId: (color) => color.id,

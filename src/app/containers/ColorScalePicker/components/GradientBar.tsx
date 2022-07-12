@@ -2,7 +2,7 @@ import { ResizeSensor2 } from '@blueprintjs/popover2';
 import { FC, useState } from 'react';
 
 import { useSelector } from 'react-redux';
-import { colorScaleSelector } from '../../../store';
+import { colorScaleSelector } from '../color-scale.slice';
 import { ColorScaleMarker } from './ColorScaleMarker';
 import { GradientPreview } from './GradientPreview';
 

@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { colorScaleReducer } from './app/store';
+import { colorScaleReducer } from './app/containers/ColorScalePicker';
 
 export const store = configureStore({
     reducer: {

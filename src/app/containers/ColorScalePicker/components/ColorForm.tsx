@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { FC } from 'react';
 import { HexColorInput } from 'react-colorful';
 import { useDispatch, useSelector } from 'react-redux';
-import { colorInputSelector, updateColor } from '../../../store';
+import { colorInputSelector, updateColor } from '../color-scale.slice';
 import { ColorUtils } from '../../../utils';
 
 const StyledColorForm = styled(FormGroup)`

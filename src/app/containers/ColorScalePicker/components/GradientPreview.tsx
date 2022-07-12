@@ -1,12 +1,14 @@
 import styled from '@emotion/styled';
-import { forwardRef, FC } from 'react';
+import { forwardRef, ReactNode } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { sortBy, prop } from 'remeda';
 import { ColorScalePoint } from '../../../models';
-import { addPoint, colorInputSelector, colorScaleSelector } from '../../../store';
+import { addPoint, colorInputSelector, colorScaleSelector } from '../color-scale.slice';
 
-export interface GradientPreviewProps {}
+export interface GradientPreviewProps {
+    children?: ReactNode;
+}
 
 const StyledGradientPreview = styled('div')<{ colors: ColorScalePoint[]; colorInput: string }>`
     background: ${({ colors, colorInput }) => (colors.length > 1 ? getCssGradient(colors) : colorInput)};
@@ -23,7 +25,7 @@ const StyledGradientPreview = styled('div')<{ colors: ColorScalePoint[]; colorIn
         inset 0 -1px 1px 0 #8f99a8;
 `;
 
-export const GradientPreview: FC<GradientPreviewProps> = forwardRef<HTMLDivElement>(({ children, ...props }, ref) => {
+export const GradientPreview = forwardRef<HTMLDivElement, GradientPreviewProps>(({ children, ...props }, ref) => {
     const dispatch = useDispatch();
     const colorScale = useSelector(colorScaleSelector);
     const colorInput = useSelector(colorInputSelector);
