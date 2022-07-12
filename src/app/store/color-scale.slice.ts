@@ -1,7 +1,7 @@
 import { createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { nanoid } from 'nanoid';
 import { find, isObject } from 'remeda';
-import { RgbColor } from 'react-colorful';
+import type { RgbColor } from 'react-colorful';
 import { ColorScalePoint } from '../models';
 import type { RootState } from '../../store';
 import { ColorUtils } from '../utils';
@@ -45,8 +45,14 @@ const colorScaleSlice = createSlice({
                 colorsAdapter.updateOne(state, { id: state.selectedPointId, changes: { color } });
             }
         },
-        movePoint: (state, action: PayloadAction<number>) => {
-            colorsAdapter.updateOne(state, { id: state.selectedPointId, changes: { offset: Math.max(0, Math.min(0.99, action.payload)) } });
+        movePoint: (state, action: PayloadAction<number | string>) => {
+            if (Number.isNaN(Number(action.payload))) {
+                return;
+            }
+            colorsAdapter.updateOne(state, {
+                id: state.selectedPointId,
+                changes: { offset: Math.max(0, Math.min(0.99, Number(action.payload))) },
+            });
         },
     },
 });

@@ -21,8 +21,8 @@ footer {
   padding: 8px;
 }
 
-.main-container > * {
-  flex-grow: 1;
+.main-container > div:first-child {
+  flex: 1 1 100px;
 }
 
 .tool-container {
@@ -55,4 +55,28 @@ footer {
   border-radius: 2px;
   box-shadow: 0 0 0 0 rgba(76, 144, 240, 0), 0 0 0 0 rgba(76, 144, 240, 0), 0 0 0 0 rgba(76, 144, 240, 0), inset 0 0 0 1px rgba(255, 255, 255, 0.2),
     inset 0 -1px 1px 0 #8f99a8;
+}
+
+.responsive-table::-webkit-scrollbar {
+  display: none;
+}
+
+.responsive-table {
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.responsive-table table {
+  width: 100%;
+}
+
+.responsive-table td {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.responsive-table th {
+  text-align: center !important;
+  vertical-align: middle !important;
 }
