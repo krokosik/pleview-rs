@@ -10,7 +10,7 @@ export interface GradientPreviewProps {
 }
 
 const StyledGradientPreview = styled('div')<{ colors: ColorScalePoint[]; colorInput: string }>`
-    background: ${({ colors, colorInput }) => (colors.length > 1 ? getCssGradient(colors) : colorInput)};
+    background: ${({ colors, colorInput }) => getCssGradient(colors) ?? colorInput};
     position: relative;
     width: 100%;
     height: 28px;
@@ -45,7 +45,10 @@ export const GradientPreview = forwardRef<HTMLDivElement, GradientPreviewProps>(
     );
 });
 
-const getCssGradient = (colors: ColorScalePoint[]) => `linear-gradient(
+const getCssGradient = (colors: ColorScalePoint[]): string | undefined =>
+    colors.length > 1
+        ? `linear-gradient(
     to right,
     ${colors.map(({ offset, color }) => `${color} ${offset * 100}%`).join(', ')}
-)`;
+)`
+        : colors[0]?.color;

@@ -41,7 +41,7 @@ const colorScaleSlice = createSlice({
 
             if (newIndex <= 0) {
                 state.entities[id]!.color = state.entities[state.ids[1]]!.color;
-            } else if (newIndex >= state.ids.length) {
+            } else if (newIndex >= state.ids.length - 1) {
                 state.entities[id]!.color = state.entities[state.ids[state.ids.length - 2]]!.color;
             } else {
                 const prev = state.entities[state.ids[newIndex - 1]]!;
@@ -57,8 +57,8 @@ const colorScaleSlice = createSlice({
             state.selectedPointId = '';
         },
         selectPoint: (state, action: PayloadAction<string>) => {
-            state.selectedPointId = action.payload;
-            state.colorInput = colorsAdapter.getSelectors().selectById(state, action.payload)!.color;
+            state.selectedPointId = state.selectedPointId === action.payload ? '' : action.payload;
+            state.colorInput = colorsAdapter.getSelectors().selectById(state, action.payload)?.color ?? state.colorInput;
         },
         updateColor: (state, action: PayloadAction<string | RgbColor>) => {
             let color = typeof action.payload === 'object' ? rgbToHex(action.payload) : action.payload;
