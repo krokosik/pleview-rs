@@ -1,7 +1,7 @@
 import { Alignment, Navbar as BpNavbar, Button, ButtonProps, Tabs } from '@blueprintjs/core';
 import { FC } from 'react';
 import { Tooltip2 } from '@blueprintjs/popover2';
-import { TauriUtils } from '../../utils';
+import { openFile, saveFile } from '../../utils';
 import { Visualizations } from '../../enums';
 
 export interface NavbarProps {
@@ -22,8 +22,8 @@ export const Navbar: FC<NavbarProps> = ({ viz, setViz }) => (
 
             <BpNavbar.Divider />
 
-            <NavbarButton icon="document-open" onClick={() => TauriUtils.openFile()} tooltip="Open" />
-            <NavbarButton icon="floppy-disk" onClick={() => TauriUtils.saveFile('Hello world!')} tooltip="Save" />
+            <NavbarButton icon="document-open" onClick={() => openFile()} tooltip="Open" />
+            <NavbarButton icon="floppy-disk" onClick={() => saveFile('Hello world!')} tooltip="Save" />
 
             <BpNavbar.Divider />
 
