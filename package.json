@@ -22,7 +22,6 @@
     "react-dom": "^18.0.0",
     "react-draggable": "^4.4.5",
     "react-redux": "^8.0.2",
-    "remeda": "^0.0.35",
     "vega": "^5.22.1",
     "vega-embed": "^6.20.8",
     "vega-lite": "^5.2.0"

@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { forwardRef, ReactNode } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { sortBy, prop } from 'remeda';
 import { ColorScalePoint } from '../../../models';
 import { addPoint, colorInputSelector, colorScaleSelector } from '../color-scale.slice';
 
@@ -48,7 +47,5 @@ export const GradientPreview = forwardRef<HTMLDivElement, GradientPreviewProps>(
 
 const getCssGradient = (colors: ColorScalePoint[]) => `linear-gradient(
     to right,
-    ${sortBy(colors, prop('offset'))
-        .map(({ offset, color }) => `${color} ${offset * 100}%`)
-        .join(', ')}
+    ${colors.map(({ offset, color }) => `${color} ${offset * 100}%`).join(', ')}
 )`;

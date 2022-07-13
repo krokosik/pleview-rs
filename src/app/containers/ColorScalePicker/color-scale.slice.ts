@@ -1,6 +1,5 @@
 import { createEntityAdapter, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { nanoid } from 'nanoid';
-import { find, isObject } from 'remeda';
 import type { RgbColor } from 'react-colorful';
 import { ColorScalePoint } from '../../models';
 import type { RootState } from '../../../store';
@@ -62,7 +61,7 @@ const colorScaleSlice = createSlice({
             state.colorInput = colorsAdapter.getSelectors().selectById(state, action.payload)!.color;
         },
         updateColor: (state, action: PayloadAction<string | RgbColor>) => {
-            let color = isObject(action.payload) ? rgbToHex(action.payload) : action.payload;
+            let color = typeof action.payload === 'object' ? rgbToHex(action.payload) : action.payload;
             if (color[0] !== '#') {
                 color = `#${color}`;
             }
@@ -98,7 +97,7 @@ export const colorInputSelector = createSelector(sliceSelector, (state) => state
 export const isPointSelectedSelector = createSelector(sliceSelector, (state) => state.selectedPointId !== '');
 
 export const selectedPointSelector = createSelector(colorScaleSelector, selectedPointIdSelector, (colors, selectedPointId) =>
-    find(colors, ({ id }) => id === selectedPointId),
+    colors.find(({ id }) => id === selectedPointId),
 );
 
 export const selectedPointColorSelector = createSelector(selectedPointSelector, (point) => point?.color);
