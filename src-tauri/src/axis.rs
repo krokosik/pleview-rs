@@ -51,7 +51,8 @@ impl AxisConfiguration<'_> {
     }
 
     pub fn set_transform(&mut self, transform: &str) {
-        let tokens: Vec<Token<f64>> = tokenize(transform, true).unwrap_or_else(|_| get_default_tokens());
+        let tokens: Vec<Token<f64>> =
+            tokenize(transform, true).unwrap_or_else(|_| get_default_tokens());
 
         let ast: Expr<f64> = parse(&tokens).unwrap_or_else(|_| get_default_expression());
 

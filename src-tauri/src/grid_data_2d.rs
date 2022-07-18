@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use std::cmp::min;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DimensionData {
     vec: Vec<f64>,
     min: f64,
@@ -43,7 +43,7 @@ impl DimensionData {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct GridData2D {
     x_data: DimensionData,
     y_data: DimensionData,
@@ -52,16 +52,7 @@ pub struct GridData2D {
 }
 
 impl GridData2D {
-    fn new() -> Self {
-        Self {
-            x_data: DimensionData::new(),
-            y_data: DimensionData::new(),
-            values_data: DimensionData::new(),
-            cumulative: Vec::new(),
-        }
-    }
-
-    fn from(xs: &[f64], ys: &[f64], values: &[f64]) -> Result<Self, String> {
+    pub fn from(xs: &[f64], ys: &[f64], values: &[f64]) -> Result<Self, String> {
         if xs.len() * ys.len() != values.len() {
             return Err(
                 "The number of values must be equal to the number of x times y values".to_owned(),

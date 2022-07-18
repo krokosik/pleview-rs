@@ -10,9 +10,12 @@ pub fn create_menu() -> Menu {
 pub fn menu_event_handler(event: WindowMenuEvent) {
     let _window = event.window();
 
-    // match event.menu_item_id() {
-    //     _ => {}
-    // };
+    match event.menu_item_id() {
+        "open" => println!("Open"),
+        "save" => println!("Save"),
+        "save_as" => println!("Save as"),
+        _ => {}
+    };
 }
 
 fn create_file_submenu() -> Submenu {
