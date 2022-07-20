@@ -13,14 +13,14 @@ mod logger;
 mod menu;
 
 fn main() {
-    let mut engine = engine::Engine::new();
+    // let mut engine = engine::Engine::new();
+
+    // engine.set_data(&data).unwrap();
+
+    // println!("{:?}", engine.get_data());
 
     let (xs, ys, values) = files::read_two_column_ascii("../test.txt").unwrap();
     let data = grid_data_2d::GridData2D::from(&xs, &ys, &values).unwrap();
-
-    engine.set_data(&data).unwrap();
-
-    println!("{:?}", engine.get_data());
 
     tauri::Builder::default()
         .menu(menu::create_menu())

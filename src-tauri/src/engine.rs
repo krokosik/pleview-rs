@@ -7,21 +7,47 @@ use crate::grid_data_2d::GridData2D;
 
 use std::cmp::{max, min};
 
-pub struct Engine<'a> {
+pub trait EngineAPI {
+    fn emit_data_changed(&self, data: &GridData2D);
+    fn emit_cross_section_changed(&self, cross_section: &CrossSection);
+    fn emit_central_pixel_changed(&self, direction: Direction, central_pixel: usize);
+    fn emit_position_changed(
+        &self,
+        direction: Direction,
+        position: f64,
+        range_lower: f64,
+        range_upper: f64,
+    );
+    fn emit_curve_changed(&self, direction: Direction, curve: &[[f64; 2]]);
+
+    fn set_data(&self, listener: Box<dyn Fn(&GridData2D)>);
+    fn set_cross_section_by_pixel(&self, listener: Box<dyn Fn(Direction, usize, bool)>);
+    fn set_cross_section_by_value(&self, listener: Box<dyn Fn(Direction, f64, bool)>);
+    fn set_cross_section_width(&self, listener: Box<dyn Fn(Direction, AxisConfiguration, bool)>);
+    fn set_axis_configuration(&self, listener: Box<dyn Fn(&AxisConfiguration)>);
+}
+
+pub struct Engine<'a, E: EngineAPI> {
     axis_configurations: [AxisConfiguration<'a>; 2],
     cross_section: CrossSection,
     data: Option<GridData2D>,
     original_data: Option<&'a GridData2D>,
+    api: E,
 }
 
-impl<'a> Engine<'a> {
-    pub fn new() -> Self {
-        Self {
+impl<'a, E: EngineAPI> Engine<'a, E> {
+    pub fn new(api: E) -> Self {
+        let mut result = Self {
             axis_configurations: [AxisConfiguration::new(), AxisConfiguration::new()],
             cross_section: CrossSection::new(),
             data: None,
             original_data: None,
-        }
+            api,
+        };
+
+        result.prepare_data().unwrap();
+
+        result
     }
 
     pub fn set_axis_configuration(
@@ -49,7 +75,8 @@ impl<'a> Engine<'a> {
             }
         }
 
-        self.emit_data_changed()
+        self.broadcast_changes();
+        Ok(())
     }
 
     pub fn set_cross_section_by_pixel(
@@ -87,16 +114,6 @@ impl<'a> Engine<'a> {
         self.set_cross_section_by_pixel(direction, central_pixel, force_signal)
     }
 
-    pub fn emit_data_changed(&self) -> Result<(), String> {
-        // TODO
-        Ok(())
-    }
-
-    pub fn emit_cross_section_changed(&self, _direction: Direction) -> Result<(), String> {
-        // TODO
-        Ok(())
-    }
-
     pub fn set_data(&mut self, data: &'a GridData2D) -> Result<(), String> {
         // TODO refactor this once I understand Rust smart pointers better
         self.original_data = Some(data);
@@ -104,7 +121,8 @@ impl<'a> Engine<'a> {
 
         self.cross_section.reset();
 
-        self.emit_data_changed()
+        self.broadcast_changes();
+        Ok(())
     }
 
     pub fn prepare_data(&mut self) -> Result<(), String> {
@@ -118,13 +136,44 @@ impl<'a> Engine<'a> {
             .values(self.original_data.unwrap().y_values());
         self.data.as_mut().unwrap().set_y_values(args);
 
-        self.emit_data_changed()
+        self.broadcast_changes();
+        Ok(())
     }
 
     pub fn set_cross_section_width(&mut self, direction: Direction, width: usize) {
         self.cross_section.set_width(direction, width);
-        self.emit_cross_section_changed(Direction::X).unwrap();
-        self.emit_cross_section_changed(Direction::Y).unwrap();
+        self.broadcast_cross_section_changed(Direction::X);
+        self.broadcast_cross_section_changed(Direction::Y);
+    }
+
+    fn broadcast_changes(&mut self) {
+        self.api.emit_data_changed(self.data.as_ref().unwrap());
+        self.broadcast_cross_section_changed(Direction::X);
+        self.broadcast_cross_section_changed(Direction::Y);
+    }
+
+    fn broadcast_cross_section_changed(&mut self, direction: Direction) {
+        self.cross_section
+            .set_curve(direction, self.calculate_cross_section(direction));
+
+        let horizontal = match direction {
+            Direction::X => self.data.as_ref().unwrap().x_values(),
+            Direction::Y => self.data.as_ref().unwrap().y_values(),
+        };
+
+        self.cross_section.update_ranges(direction, horizontal);
+
+        self.api.emit_cross_section_changed(&self.cross_section);
+        self.api
+            .emit_central_pixel_changed(direction, self.cross_section.get_central_pixel(direction));
+        self.api.emit_position_changed(
+            direction,
+            self.cross_section.get_position(direction),
+            self.cross_section.get_range_lower(direction),
+            self.cross_section.get_range_upper(direction),
+        );
+        self.api
+            .emit_curve_changed(direction, self.cross_section.get_curve(direction));
     }
 
     pub fn get_data(&self) -> Option<&GridData2D> {
@@ -135,18 +184,18 @@ impl<'a> Engine<'a> {
         &self.cross_section
     }
 
-    pub fn get_cross_section_point(&self) -> Option<(f64, f64)> {
+    pub fn get_cross_section_point(&self) -> Option<[f64; 2]> {
         self.data.as_ref()?;
 
-        Some((
+        Some([
             self.data.as_ref().unwrap().x_values()
                 [self.cross_section.get_central_pixel(Direction::X)],
             self.data.as_ref().unwrap().y_values()
                 [self.cross_section.get_central_pixel(Direction::Y)],
-        ))
+        ])
     }
 
-    pub fn calculate_cross_section(&self, direction: Direction) -> Vec<(f64, f64)> {
+    pub fn calculate_cross_section(&self, direction: Direction) -> Vec<[f64; 2]> {
         if self.data.is_none() {
             return vec![];
         }
@@ -174,14 +223,14 @@ impl<'a> Engine<'a> {
             .iter()
             .enumerate()
             .map(|(i, y)| {
-                let mut point = (*y, 0.0);
+                let mut point = [*y, 0.0];
                 for j in 0..width {
                     let pos = self.cross_section.get_central_pixel(direction) - offset + j;
                     let z = match direction {
                         Direction::X => data.get_value_bounded(pos, i),
                         Direction::Y => data.get_value_bounded(i, pos),
                     };
-                    point.1 += z.unwrap();
+                    point[1] += z.unwrap();
                 }
                 point
             })
@@ -202,15 +251,15 @@ impl<'a> Engine<'a> {
         result
             .iter()
             .enumerate()
-            .map(|(i, (first, _))| match direction {
-                Direction::X => (
+            .map(|(i, [first, _])| match direction {
+                Direction::X => [
                     *first,
                     data.sum_in_index_range((pos0, pos1), (i, i)) * factor,
-                ),
-                Direction::Y => (
+                ],
+                Direction::Y => [
                     *first,
                     data.sum_in_index_range((i, i), (pos0, pos1)) * factor,
-                ),
+                ],
             })
             .collect()
     }

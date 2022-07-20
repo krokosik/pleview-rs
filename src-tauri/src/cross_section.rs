@@ -51,11 +51,57 @@ impl CrossSection {
         self.central_pixels[direction as usize]
     }
 
+    pub fn get_position(&self, direction: Direction) -> f64 {
+        self.position[direction as usize]
+    }
+
+    pub fn get_range_lower(&self, direction: Direction) -> f64 {
+        self.range_lower[direction as usize]
+    }
+
+    pub fn get_range_upper(&self, direction: Direction) -> f64 {
+        self.range_upper[direction as usize]
+    }
+
     pub fn get_width(&self, direction: Direction) -> usize {
         self.width_in_pixels[direction as usize]
     }
 
+    pub fn get_curve(&self, direction: Direction) -> &Vec<[f64; 2]> {
+        &self.curve[direction as usize]
+    }
+
     pub fn set_width(&mut self, direction: Direction, width: usize) {
         self.width_in_pixels[direction as usize] = max(1, width);
+    }
+
+    pub fn set_curve(&mut self, direction: Direction, curve: Vec<[f64; 2]>) {
+        self.curve[direction as usize] = curve;
+    }
+
+    pub fn update_ranges(&mut self, direction: Direction, horizontal: &[f64]) {
+        if horizontal.is_empty() {
+            return;
+        }
+
+        let width = self.get_width(direction);
+
+        let tmp1 = horizontal
+            .get(self.get_central_pixel(direction) - width / 2 - 1)
+            .unwrap_or_else(|| horizontal.get(0).unwrap());
+        let tmp2 = horizontal
+            .get(self.get_central_pixel(direction) - width / 2)
+            .unwrap_or_else(|| horizontal.get(0).unwrap());
+
+        self.range_lower[direction as usize] = (tmp1 + tmp2) / 2.;
+
+        let tmp1 = horizontal
+            .get(self.get_central_pixel(direction) + width / 2 - 1)
+            .unwrap_or_else(|| horizontal.get(0).unwrap());
+        let tmp2 = horizontal
+            .get(self.get_central_pixel(direction) + width / 2)
+            .unwrap_or_else(|| horizontal.get(0).unwrap());
+
+        self.range_upper[direction as usize] = (tmp1 + tmp2) / 2.;
     }
 }
