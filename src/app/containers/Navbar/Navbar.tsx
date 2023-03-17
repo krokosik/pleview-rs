@@ -3,6 +3,8 @@ import { FC } from 'react';
 import { Tooltip2 } from '@blueprintjs/popover2';
 import { openFile, saveFile } from '../../utils';
 import { Visualizations } from '../../enums';
+import { useDispatch } from 'react-redux';
+import { toggleColorScale } from './navbar.slice';
 
 export interface NavbarProps {
     viz: Visualizations;
@@ -15,36 +17,40 @@ const NavbarButton: FC<ButtonProps & { tooltip: string }> = ({ tooltip, ...props
     </Tooltip2>
 );
 
-export const Navbar: FC<NavbarProps> = ({ viz, setViz }) => (
-    <BpNavbar>
-        <BpNavbar.Group align={Alignment.CENTER}>
-            <BpNavbar.Heading>PLEview</BpNavbar.Heading>
+export const Navbar: FC<NavbarProps> = ({ viz, setViz }) => {
+    const dispatch = useDispatch();
 
-            <BpNavbar.Divider />
+    return (
+        <BpNavbar>
+            <BpNavbar.Group align={Alignment.CENTER}>
+                <BpNavbar.Heading>PLEview</BpNavbar.Heading>
 
-            <NavbarButton icon="document-open" onClick={() => openFile()} tooltip="Open" />
-            <NavbarButton icon="floppy-disk" onClick={() => saveFile('Hello world!')} tooltip="Save" />
+                <BpNavbar.Divider />
 
-            <BpNavbar.Divider />
+                <NavbarButton icon="document-open" onClick={() => openFile()} tooltip="Open" />
+                <NavbarButton icon="floppy-disk" onClick={() => saveFile('Hello world!')} tooltip="Save" />
 
-            <NavbarButton icon="duplicate" tooltip="Copy" />
+                <BpNavbar.Divider />
 
-            <BpNavbar.Divider />
+                <NavbarButton icon="duplicate" tooltip="Copy" />
 
-            <NavbarButton icon="search" tooltip="Zoom mode" />
-            <NavbarButton icon="horizontal-inbetween" tooltip="Marker mode" />
+                <BpNavbar.Divider />
 
-            <BpNavbar.Divider />
+                <NavbarButton icon="search" tooltip="Zoom mode" />
+                <NavbarButton icon="horizontal-inbetween" tooltip="Marker mode" />
 
-            <NavbarButton icon="wrench" tooltip="Cross-section" />
-            <NavbarButton icon="style" tooltip="Color scale" />
+                <BpNavbar.Divider />
 
-            <BpNavbar.Divider />
+                <NavbarButton icon="wrench" tooltip="Cross-section" />
+                <NavbarButton icon="style" tooltip="Color scale" onClick={() => dispatch(toggleColorScale())} />
 
-            <Tabs id="viz-tabs" onChange={(tabId) => setViz(tabId as Visualizations)} selectedTabId={viz}>
-                <Tabs.Tab id={Visualizations.Map} title={Visualizations.Map} />
-                <Tabs.Tab id={Visualizations.CrossSections} title={Visualizations.CrossSections} />
-            </Tabs>
-        </BpNavbar.Group>
-    </BpNavbar>
-);
+                <BpNavbar.Divider />
+
+                <Tabs id="viz-tabs" onChange={(tabId) => setViz(tabId as Visualizations)} selectedTabId={viz}>
+                    <Tabs.Tab id={Visualizations.Map} title={Visualizations.Map} />
+                    <Tabs.Tab id={Visualizations.CrossSections} title={Visualizations.CrossSections} />
+                </Tabs>
+            </BpNavbar.Group>
+        </BpNavbar>
+    );
+};
