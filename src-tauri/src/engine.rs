@@ -7,42 +7,20 @@ use crate::grid_data_2d::GridData2D;
 
 use std::cmp::{max, min};
 
-pub trait EngineAPI {
-    fn emit_data_changed(&self, data: &GridData2D);
-    fn emit_cross_section_changed(&self, cross_section: &CrossSection);
-    fn emit_central_pixel_changed(&self, direction: Direction, central_pixel: usize);
-    fn emit_position_changed(
-        &self,
-        direction: Direction,
-        position: f64,
-        range_lower: f64,
-        range_upper: f64,
-    );
-    fn emit_curve_changed(&self, direction: Direction, curve: &[[f64; 2]]);
-
-    fn set_data(&self, listener: Box<dyn Fn(&GridData2D)>);
-    fn set_cross_section_by_pixel(&self, listener: Box<dyn Fn(Direction, usize, bool)>);
-    fn set_cross_section_by_value(&self, listener: Box<dyn Fn(Direction, f64, bool)>);
-    fn set_cross_section_width(&self, listener: Box<dyn Fn(Direction, AxisConfiguration, bool)>);
-    fn set_axis_configuration(&self, listener: Box<dyn Fn(&AxisConfiguration)>);
-}
-
-pub struct Engine<'a, E: EngineAPI> {
-    axis_configurations: [AxisConfiguration<'a>; 2],
+pub struct Engine<'a> {
+    axis_configurations: [AxisConfiguration; 2],
     cross_section: CrossSection,
     data: Option<GridData2D>,
     original_data: Option<&'a GridData2D>,
-    api: E,
 }
 
-impl<'a, E: EngineAPI> Engine<'a, E> {
-    pub fn new(api: E) -> Self {
+impl<'a> Engine<'a> {
+    pub fn new() -> Self {
         let mut result = Self {
             axis_configurations: [AxisConfiguration::new(), AxisConfiguration::new()],
             cross_section: CrossSection::new(),
             data: None,
             original_data: None,
-            api,
         };
 
         result.prepare_data().unwrap();
@@ -53,7 +31,7 @@ impl<'a, E: EngineAPI> Engine<'a, E> {
     pub fn set_axis_configuration(
         &mut self,
         direction: &Direction,
-        axis_configuration: AxisConfiguration<'a>,
+        axis_configuration: AxisConfiguration,
     ) -> Result<(), String> {
         let axis_index = *direction as usize;
         self.axis_configurations[axis_index] = axis_configuration;
@@ -147,7 +125,7 @@ impl<'a, E: EngineAPI> Engine<'a, E> {
     }
 
     fn broadcast_changes(&mut self) {
-        self.api.emit_data_changed(self.data.as_ref().unwrap());
+        // self.api.emit_data_changed(self.data.as_ref().unwrap());
         self.broadcast_cross_section_changed(Direction::X);
         self.broadcast_cross_section_changed(Direction::Y);
     }
@@ -163,17 +141,17 @@ impl<'a, E: EngineAPI> Engine<'a, E> {
 
         self.cross_section.update_ranges(direction, horizontal);
 
-        self.api.emit_cross_section_changed(&self.cross_section);
-        self.api
-            .emit_central_pixel_changed(direction, self.cross_section.get_central_pixel(direction));
-        self.api.emit_position_changed(
-            direction,
-            self.cross_section.get_position(direction),
-            self.cross_section.get_range_lower(direction),
-            self.cross_section.get_range_upper(direction),
-        );
-        self.api
-            .emit_curve_changed(direction, self.cross_section.get_curve(direction));
+        // self.api.emit_cross_section_changed(&self.cross_section);
+        // self.api
+        //     .emit_central_pixel_changed(direction, self.cross_section.get_central_pixel(direction));
+        // self.api.emit_position_changed(
+        //     direction,
+        //     self.cross_section.get_position(direction),
+        //     self.cross_section.get_range_lower(direction),
+        //     self.cross_section.get_range_upper(direction),
+        // );
+        // self.api
+        //     .emit_curve_changed(direction, self.cross_section.get_curve(direction));
     }
 
     pub fn get_data(&self) -> Option<&GridData2D> {
