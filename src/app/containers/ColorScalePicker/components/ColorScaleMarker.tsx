@@ -34,15 +34,16 @@ export const ColorScaleMarker: FC<ColorScaleMarkerProps> = ({ point, parentWidth
     return (
         <DraggableCore
             onDrag={(e, data) => {
-                dispatch(movePoint(data.x / parentWidth));
+                dispatch(movePoint({ pointId: point.id, position: data.x / parentWidth }));
             }}
-            onMouseDown={() => {
+            onStop={() => {
                 dispatch(selectPoint(point.id));
             }}
         >
             <StyledColorScaleMarker
                 onClick={(e) => {
                     e.stopPropagation();
+                    dispatch(selectPoint(point.id));
                 }}
                 onDoubleClick={() => {
                     dispatch(removePoint(point.id));
