@@ -1,11 +1,11 @@
 [package]
-name = "PLEview"
+name = "pleview"
 version = "0.1.0"
 description = "PLEview is an open-source project to assist in analysis of experimental data."
 authors = ["Tomasz Kazimierczuk, Wiktor Kraśnicki"]
 license = "MIT"
 repository = "https://github.com/wkrasnicki/pleview-rs"
-default-run = "PLEview"
+default-run = "pleview"
 edition = "2021"
 rust-version = "1.68"
 
