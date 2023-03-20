@@ -13,10 +13,10 @@ pub enum AxisType {
 }
 
 #[derive(Clone)]
-pub struct AxisConfiguration<'a> {
+pub struct AxisConfiguration {
     pub axis_type: AxisType,
     use_transform: bool,
-    transform: Computer<'a, f64>,
+    // transform: Computer<'a, f64>,
     expression: Expr<f64>,
 }
 
@@ -35,17 +35,17 @@ fn get_default_expression() -> Expr<f64> {
     parse(&get_default_tokens()).unwrap()
 }
 
-impl AxisConfiguration<'_> {
+impl AxisConfiguration {
     pub fn new() -> Self {
-        let mut computer = Computer::<f64>::default();
+        // let mut computer = Computer::<f64>::default();
 
-        // The boolean stands for is_constant
-        computer.variables.extend(default_vars());
+        // // The boolean stands for is_constant
+        // computer.variables.extend(default_vars());
 
         Self {
             axis_type: AxisType::FromFile,
             use_transform: false,
-            transform: computer,
+            // transform: computer,
             expression: get_default_expression(),
         }
     }
@@ -67,7 +67,8 @@ impl AxisConfiguration<'_> {
                 .collect::<Vec<f64>>(),
         };
 
-        let mut transform = self.transform.clone();
+        let mut transform = Computer::<f64>::default();
+        transform.variables.extend(default_vars());
 
         let result: Vec<f64> = t_values
             .iter()

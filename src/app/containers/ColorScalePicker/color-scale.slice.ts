@@ -70,13 +70,17 @@ const colorScaleSlice = createSlice({
                 colorsAdapter.updateOne(state, { id: state.selectedPointId, changes: { color } });
             }
         },
-        movePoint: (state, action: PayloadAction<number | string>) => {
-            if (Number.isNaN(Number(action.payload))) {
+        movePoint: (state, action: PayloadAction<{ pointId: string; position: number | string }>) => {
+            const { pointId, position } = action.payload;
+
+            if (Number.isNaN(Number(position))) {
                 return;
             }
+
+            state.selectedPointId = pointId;
             colorsAdapter.updateOne(state, {
                 id: state.selectedPointId,
-                changes: { offset: Math.max(0, Math.min(0.99, Number(action.payload))) },
+                changes: { offset: Math.max(0, Math.min(0.99, Number(position))) },
             });
         },
     },
