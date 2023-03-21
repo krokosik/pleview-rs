@@ -127,7 +127,7 @@ impl GridData2D {
     }
 
     fn calculate_cumulative(&mut self) {
-        self.cumulative = self.values_data.vec.clone();
+        self.cumulative.clone_from(&self.values_data.vec);
 
         for i in 1..self.x_data.vec.len() {
             for j in 1..self.y_data.vec.len() {
