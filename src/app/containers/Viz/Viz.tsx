@@ -1,7 +1,7 @@
 import { Card, Slider } from '@blueprintjs/core';
 import { FC, useMemo, useState } from 'react';
 import { Visualizations } from '../../enums';
-import { Linechart } from './components';
+import { Heatmap, Linechart } from './components';
 
 export interface DataPoint {
     x: number;
@@ -14,6 +14,7 @@ interface VizProps {
 }
 
 const data: DataPoint[] = [];
+const zGrid: number[][] = [];
 
 const N_X = 10;
 const N_Y = 1000;
@@ -30,13 +31,16 @@ for (let y = 0; y <= N_Y; y++) {
 }
 
 xData.forEach((x) => {
+    const zRow: number[] = [];
     yData.forEach((y) => {
         data.push({
             x,
             y,
             z: Math.random() * 10,
         });
+        zRow.push(Math.random() * 10);
     });
+    zGrid.push(zRow);
 });
 
 export const Viz: FC<VizProps> = ({ viz }) => {
@@ -46,7 +50,7 @@ export const Viz: FC<VizProps> = ({ viz }) => {
     const yzData = useMemo(() => data.filter((d) => d.x === x).map((d) => d.z), [x]);
     const xzData = useMemo(() => data.filter((d) => d.y === y).map((d) => d.z), [y]);
 
-    return (
+    return viz === Visualizations.CrossSections ? (
         <>
             <Card style={{ height: '50%' }}>
                 <Slider value={y} onChange={(v) => setY(v)} min={0} max={N_Y} stepSize={1} labelStepSize={N_Y / 10} />
@@ -57,5 +61,9 @@ export const Viz: FC<VizProps> = ({ viz }) => {
                 <Linechart xData={yData} yData={yzData} />
             </Card>
         </>
+    ) : (
+        <Card>
+            <Heatmap zGrid={zGrid} />
+        </Card>
     );
 };

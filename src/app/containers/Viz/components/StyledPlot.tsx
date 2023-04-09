@@ -32,7 +32,7 @@ const blueprintLayout: Partial<Layout> = {
             color: Colors.LIGHT_GRAY1,
         },
     },
-    margin: { l: 24, r: 24, b: 24, t: 24, pad: 4 },
+    margin: { l: 40, r: 40, b: 40, t: 40, pad: 4 },
     plot_bgcolor: 'transparent',
     paper_bgcolor: 'transparent',
 };
