@@ -16,7 +16,7 @@ interface VizProps {
 const data: DataPoint[] = [];
 const zGrid: number[][] = [];
 
-const N_X = 10;
+const N_X = 1000;
 const N_Y = 1000;
 
 const xData: number[] = [];
