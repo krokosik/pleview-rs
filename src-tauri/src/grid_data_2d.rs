@@ -226,6 +226,15 @@ impl GridData2D {
         self.values_data.max
     }
 
+    pub fn get_z_grid(&self) -> Vec<Vec<f64>> {
+        self
+            .values_data
+            .vec
+            .chunks(self.cols())
+            .map(|x| x.to_vec())
+            .collect()
+    }
+
     pub fn get_1d_index(&self, nx: usize, ny: usize) -> Option<usize> {
         if nx >= self.cols() || ny >= self.rows() {
             return None;

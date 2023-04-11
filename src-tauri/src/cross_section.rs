@@ -2,8 +2,9 @@
 
 use crate::enums::Direction;
 use std::cmp::max;
+use serde::Serialize;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Serialize)]
 pub struct CrossSection {
     central_pixels: [usize; 2],
     width_in_pixels: [usize; 2],
