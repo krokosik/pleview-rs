@@ -132,8 +132,9 @@ impl Engine {
     }
 
     fn broadcast_cross_section_changed(&mut self, direction: Direction) {
+        let curve = self.calculate_cross_section(direction).iter().map(|[x, y]| (*x, *y)).unzip();
         self.cross_section
-            .set_curve(direction, self.calculate_cross_section(direction));
+            .set_curve(direction, [curve.0, curve.1]);
 
         let horizontal = match direction {
             Direction::X => self.data.as_ref().unwrap().x_values(),
