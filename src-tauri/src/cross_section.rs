@@ -3,7 +3,7 @@
 use crate::enums::Direction;
 use std::cmp::max;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct CrossSection {
     central_pixels: [usize; 2],
     width_in_pixels: [usize; 2],
@@ -87,20 +87,20 @@ impl CrossSection {
         let width = self.get_width(direction);
 
         let tmp1 = horizontal
-            .get(self.get_central_pixel(direction) - width / 2 - 1)
-            .unwrap_or_else(|| horizontal.get(0).unwrap());
+            .get((self.get_central_pixel(direction) - width / 2).saturating_sub(1))
+            .unwrap_or_else(|| horizontal.first().unwrap());
         let tmp2 = horizontal
             .get(self.get_central_pixel(direction) - width / 2)
-            .unwrap_or_else(|| horizontal.get(0).unwrap());
+            .unwrap_or_else(|| horizontal.first().unwrap());
 
         self.range_lower[direction as usize] = (tmp1 + tmp2) / 2.;
 
         let tmp1 = horizontal
-            .get(self.get_central_pixel(direction) + width / 2 - 1)
-            .unwrap_or_else(|| horizontal.get(0).unwrap());
+            .get((self.get_central_pixel(direction) + width / 2).saturating_sub(1))
+            .unwrap_or_else(|| horizontal.first().unwrap());
         let tmp2 = horizontal
             .get(self.get_central_pixel(direction) + width / 2)
-            .unwrap_or_else(|| horizontal.get(0).unwrap());
+            .unwrap_or_else(|| horizontal.first().unwrap());
 
         self.range_upper[direction as usize] = (tmp1 + tmp2) / 2.;
     }

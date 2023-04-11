@@ -214,14 +214,14 @@ impl Engine {
                 point
             })
             .collect();
-
+                
         let pos0 = max(self.cross_section.get_central_pixel(direction) - offset, 0);
         let pos1 = min(
-            self.cross_section.get_central_pixel(direction) + offset - 1,
+            (self.cross_section.get_central_pixel(direction) + offset).saturating_sub(1),
             xs.len() - 1,
         );
 
-        if pos1 < pos0 {
+        if pos1 <= pos0 {
             return result;
         }
 
