@@ -1,5 +1,5 @@
 import { Card, Slider } from '@blueprintjs/core';
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { Visualizations } from '../../enums';
 import { Heatmap, Linechart } from './components';
 import { getInitialData, updateCrossSection } from '../../utils';

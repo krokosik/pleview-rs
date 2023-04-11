@@ -97,7 +97,7 @@ impl Engine {
     pub fn set_data(&mut self, data: GridData2D) -> Result<(), String> {
         // TODO refactor this once I understand Rust smart pointers better
         self.original_data = Some(data);
-        self.data = self.original_data.clone();
+        self.data.clone_from(&self.original_data);
 
         self.cross_section.reset();
 
@@ -106,7 +106,7 @@ impl Engine {
     }
 
     pub fn prepare_data(&mut self) -> Result<(), String> {
-        self.data = self.original_data.clone();
+        self.data.clone_from(&self.original_data);
 
         let args = self.axis_configurations[Direction::X as usize]
             .values(self.original_data.as_ref().unwrap().x_values());

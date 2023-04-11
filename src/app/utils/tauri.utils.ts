@@ -32,7 +32,7 @@ export const initMenuListeners = async (): Promise<void> => {
         return;
     }
 
-    await listen('tauri://menu', async (event) => {
+    await listen('tauri://menu', (event) => {
         switch (event.payload) {
             case 'open':
                 void openFile();
@@ -49,9 +49,8 @@ export const initMenuListeners = async (): Promise<void> => {
     });
 };
 
-export const getInitialData = async (): Promise<
-    [{ central_pixels: [number, number]; curve: [[number[], number[]], [number[], number[]]] }, number[][]]
-> => invoke('get_initial_data');
+export const getInitialData = (): Promise<[{ central_pixels: [number, number]; curve: [[number[], number[]], [number[], number[]]] }, number[][]]> =>
+    invoke('get_initial_data');
 
-export const updateCrossSection = async (direction: 'x' | 'y', pixel: number): Promise<number[]> =>
+export const updateCrossSection = (direction: 'x' | 'y', pixel: number): Promise<number[]> =>
     invoke('update_cross_section', { direction: direction === 'x' ? 0 : 1, pixel });
