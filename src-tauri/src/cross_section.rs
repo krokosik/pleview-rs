@@ -2,15 +2,16 @@
 
 use crate::enums::Direction;
 use std::cmp::max;
+use serde::Serialize;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, Serialize)]
 pub struct CrossSection {
     central_pixels: [usize; 2],
     width_in_pixels: [usize; 2],
     position: [f64; 2],
     range_lower: [f64; 2],
     range_upper: [f64; 2],
-    curve: [Vec<[f64; 2]>; 2],
+    curve: [[Vec<f64>; 2]; 2],
 }
 
 impl CrossSection {
@@ -21,7 +22,7 @@ impl CrossSection {
             position: [0.0, 0.0],
             range_lower: [0.0, 0.0],
             range_upper: [0.0, 0.0],
-            curve: [vec![], vec![]],
+            curve: [[vec![], vec![]], [vec![], vec![]]],
         }
     }
 
@@ -32,16 +33,18 @@ impl CrossSection {
             self.position[i] = 0.0;
             self.range_lower[i] = 0.0;
             self.range_upper[i] = 0.0;
-            self.curve[i].clear();
+            for j in 0..1 {
+                self.curve[i][j].clear();
+            }
         }
     }
 
     pub fn set_central_pixel(&mut self, direction: Direction, pixel: usize) -> Result<(), String> {
         let direction = direction as usize;
 
-        if pixel > self.width_in_pixels[direction] {
-            return Err("Central pixel out of range".to_owned());
-        }
+        // if pixel > self.width_in_pixels[direction] {
+        //     return Err("Central pixel out of range".to_owned());
+        // }
         self.central_pixels[direction] = pixel;
 
         Ok(())
@@ -67,7 +70,7 @@ impl CrossSection {
         self.width_in_pixels[direction as usize]
     }
 
-    pub fn get_curve(&self, direction: Direction) -> &Vec<[f64; 2]> {
+    pub fn get_curve(&self, direction: Direction) -> &[Vec<f64>; 2] {
         &self.curve[direction as usize]
     }
 
@@ -75,7 +78,7 @@ impl CrossSection {
         self.width_in_pixels[direction as usize] = max(1, width);
     }
 
-    pub fn set_curve(&mut self, direction: Direction, curve: Vec<[f64; 2]>) {
+    pub fn set_curve(&mut self, direction: Direction, curve: [Vec<f64>; 2]) {
         self.curve[direction as usize] = curve;
     }
 
@@ -87,20 +90,20 @@ impl CrossSection {
         let width = self.get_width(direction);
 
         let tmp1 = horizontal
-            .get(self.get_central_pixel(direction) - width / 2 - 1)
-            .unwrap_or_else(|| horizontal.get(0).unwrap());
+            .get((self.get_central_pixel(direction) - width / 2).saturating_sub(1))
+            .unwrap_or_else(|| horizontal.first().unwrap());
         let tmp2 = horizontal
             .get(self.get_central_pixel(direction) - width / 2)
-            .unwrap_or_else(|| horizontal.get(0).unwrap());
+            .unwrap_or_else(|| horizontal.first().unwrap());
 
         self.range_lower[direction as usize] = (tmp1 + tmp2) / 2.;
 
         let tmp1 = horizontal
-            .get(self.get_central_pixel(direction) + width / 2 - 1)
-            .unwrap_or_else(|| horizontal.get(0).unwrap());
+            .get((self.get_central_pixel(direction) + width / 2).saturating_sub(1))
+            .unwrap_or_else(|| horizontal.first().unwrap());
         let tmp2 = horizontal
             .get(self.get_central_pixel(direction) + width / 2)
-            .unwrap_or_else(|| horizontal.get(0).unwrap());
+            .unwrap_or_else(|| horizontal.first().unwrap());
 
         self.range_upper[direction as usize] = (tmp1 + tmp2) / 2.;
     }

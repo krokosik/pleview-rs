@@ -2,6 +2,7 @@ import { listen } from '@tauri-apps/api/event';
 import { DialogFilter, message, open, save } from '@tauri-apps/api/dialog';
 import { documentDir } from '@tauri-apps/api/path';
 import { readTextFile, writeFile } from '@tauri-apps/api/fs';
+import { invoke } from '@tauri-apps/api';
 
 export const asciiFilter: DialogFilter = { name: 'Ascii', extensions: ['txt', 'dat'] };
 
@@ -31,7 +32,7 @@ export const initMenuListeners = async (): Promise<void> => {
         return;
     }
 
-    await listen('tauri://menu', async (event) => {
+    await listen('tauri://menu', (event) => {
         switch (event.payload) {
             case 'open':
                 void openFile();
@@ -47,3 +48,9 @@ export const initMenuListeners = async (): Promise<void> => {
         }
     });
 };
+
+export const getInitialData = (): Promise<[{ central_pixels: [number, number]; curve: [[number[], number[]], [number[], number[]]] }, number[][]]> =>
+    invoke('get_initial_data');
+
+export const updateCrossSection = (direction: 'x' | 'y', pixel: number): Promise<number[]> =>
+    invoke('update_cross_section', { direction: direction === 'x' ? 0 : 1, pixel });
