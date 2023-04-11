@@ -7,25 +7,21 @@ use crate::grid_data_2d::GridData2D;
 
 use std::cmp::{max, min};
 
-pub struct Engine<'a> {
+pub struct Engine {
     axis_configurations: [AxisConfiguration; 2],
     cross_section: CrossSection,
     data: Option<GridData2D>,
-    original_data: Option<&'a GridData2D>,
+    original_data: Option<GridData2D>,
 }
 
-impl<'a> Engine<'a> {
+impl Engine {
     pub fn new() -> Self {
-        let mut result = Self {
+        Self {
             axis_configurations: [AxisConfiguration::new(), AxisConfiguration::new()],
             cross_section: CrossSection::new(),
             data: None,
             original_data: None,
-        };
-
-        result.prepare_data().unwrap();
-
-        result
+        }
     }
 
     pub fn set_axis_configuration(
@@ -43,12 +39,12 @@ impl<'a> Engine<'a> {
         match direction {
             Direction::X => {
                 let args = self.axis_configurations[axis_index]
-                    .values(self.original_data.unwrap().x_values());
+                    .values(self.original_data.as_ref().unwrap().x_values());
                 self.data.as_mut().unwrap().set_x_values(args);
             }
             Direction::Y => {
                 let args = self.axis_configurations[axis_index]
-                    .values(self.original_data.unwrap().x_values());
+                    .values(self.original_data.as_ref().unwrap().x_values());
                 self.data.as_mut().unwrap().set_x_values(args);
             }
         }
@@ -92,10 +88,15 @@ impl<'a> Engine<'a> {
         self.set_cross_section_by_pixel(direction, central_pixel, force_signal)
     }
 
-    pub fn set_data(&mut self, data: &'a GridData2D) -> Result<(), String> {
+    pub fn load_data_from_matrix_file(&mut self, filepath: &str) -> Result<(), String> {
+        let data = GridData2D::from_matrix_file(filepath)?;
+        self.set_data(data)
+    }
+
+    pub fn set_data(&mut self, data: GridData2D) -> Result<(), String> {
         // TODO refactor this once I understand Rust smart pointers better
         self.original_data = Some(data);
-        self.data = Some((*data).clone());
+        self.data = self.original_data.clone();
 
         self.cross_section.reset();
 
@@ -104,14 +105,14 @@ impl<'a> Engine<'a> {
     }
 
     pub fn prepare_data(&mut self) -> Result<(), String> {
-        self.data = self.original_data.map(|data| (*data).clone());
+        self.data = self.original_data.clone();
 
         let args = self.axis_configurations[Direction::X as usize]
-            .values(self.original_data.unwrap().x_values());
+            .values(self.original_data.as_ref().unwrap().x_values());
         self.data.as_mut().unwrap().set_x_values(args);
 
         let args = self.axis_configurations[Direction::Y as usize]
-            .values(self.original_data.unwrap().y_values());
+            .values(self.original_data.as_ref().unwrap().y_values());
         self.data.as_mut().unwrap().set_y_values(args);
 
         self.broadcast_changes();

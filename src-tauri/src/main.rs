@@ -13,6 +13,11 @@ mod logger;
 mod menu;
 
 fn main() {
+    let mut engine = engine::Engine::new();
+    if let Err(s) = engine.load_data_from_matrix_file("..\\sample-data\\microwaves_OFF.asc") {
+        eprintln!("{}", s);
+    }
+
     tauri::Builder::default()
         .menu(menu::create_menu())
         .on_menu_event(menu::menu_event_handler)

@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 use std::cmp::min;
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 
 #[derive(Clone, Debug)]
 pub struct DimensionData {
@@ -69,6 +71,33 @@ impl GridData2D {
         grid.calculate_cumulative();
 
         Ok(grid)
+    }
+
+    pub fn from_matrix_file(filepath: &str) -> Result<Self, String> {
+        let mut xs = Vec::new();
+        let mut ys = Vec::new();
+        let mut values = Vec::new();
+
+        let file = File::open(filepath).map_err(|e| e.to_string())?;
+        let reader = BufReader::new(file);
+
+        for (i, line) in reader.lines().enumerate() {
+            let line = line.map_err(|e| e.to_string())?;
+            
+            let line_values: Vec<f64> = line
+                .split_whitespace()
+                .map(|s| s.parse::<f64>().unwrap())
+                .collect();
+
+            if i == 0 {
+                xs = line_values;
+            } else {
+                ys.push(line_values[0]);
+                values.extend_from_slice(&line_values[1..]);
+            }
+        }
+
+        Self::from(&xs, &ys, &values)
     }
 
     fn data_changed(&mut self) {
