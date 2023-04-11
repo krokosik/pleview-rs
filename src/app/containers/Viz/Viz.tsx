@@ -1,8 +1,8 @@
 import { Card, Slider } from '@blueprintjs/core';
-import { FC, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Visualizations } from '../../enums';
 import { Heatmap, Linechart } from './components';
-import { getInitialData } from '../../utils';
+import { getInitialData, updateCrossSection } from '../../utils';
 
 interface VizProps {
     viz: Visualizations;
@@ -29,19 +29,29 @@ export const Viz: FC<VizProps> = ({ viz }) => {
         });
     }, []);
 
+    const updateXZCrossSection = useCallback((pixel: number) => {
+        setX(pixel);
+        void updateCrossSection('y', pixel).then(setXZData);
+    }, []);
+
+    const updateYZCrossSection = useCallback((pixel: number) => {
+        setY(pixel);
+        void updateCrossSection('x', pixel).then(setYZData);
+    }, []);
+
     return viz === Visualizations.CrossSections ? (
         <>
             <Card style={{ height: '50%' }}>
                 {yData.length > 0 && (
-                    <Slider value={y} onChange={(v) => setY(v)} min={0} max={yData.length} stepSize={1} labelStepSize={yData.length / 10} />
+                    <Slider value={y} onChange={updateYZCrossSection} min={0} max={yData.length} stepSize={1} labelStepSize={yData.length / 10} />
                 )}
-                <Linechart xData={xData} yData={xzData} />
+                <Linechart xData={yData} yData={xzData} />
             </Card>
             <Card style={{ height: '50%' }}>
                 {xData.length > 0 && (
-                    <Slider value={x} onChange={(v) => setX(v)} min={0} max={xData.length} stepSize={1} labelStepSize={xData.length / 10} />
+                    <Slider value={x} onChange={updateXZCrossSection} min={0} max={xData.length} stepSize={1} labelStepSize={xData.length / 10} />
                 )}
-                <Linechart xData={yData} yData={yzData} />
+                <Linechart xData={xData} yData={yzData} />
             </Card>
         </>
     ) : (

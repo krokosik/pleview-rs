@@ -52,3 +52,6 @@ export const initMenuListeners = async (): Promise<void> => {
 export const getInitialData = async (): Promise<
     [{ central_pixels: [number, number]; curve: [[number[], number[]], [number[], number[]]] }, number[][]]
 > => invoke('get_initial_data');
+
+export const updateCrossSection = async (direction: 'x' | 'y', pixel: number): Promise<number[]> =>
+    invoke('update_cross_section', { direction: direction === 'x' ? 0 : 1, pixel });

@@ -42,9 +42,9 @@ impl CrossSection {
     pub fn set_central_pixel(&mut self, direction: Direction, pixel: usize) -> Result<(), String> {
         let direction = direction as usize;
 
-        if pixel > self.width_in_pixels[direction] {
-            return Err("Central pixel out of range".to_owned());
-        }
+        // if pixel > self.width_in_pixels[direction] {
+        //     return Err("Central pixel out of range".to_owned());
+        // }
         self.central_pixels[direction] = pixel;
 
         Ok(())

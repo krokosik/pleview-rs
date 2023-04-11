@@ -63,6 +63,7 @@ impl Engine {
             self.cross_section
                 .set_central_pixel(direction, central_pixel)?;
         }
+        self.broadcast_cross_section_changed(direction);
         Ok(())
     }
 
