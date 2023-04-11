@@ -2,6 +2,7 @@ import { listen } from '@tauri-apps/api/event';
 import { DialogFilter, message, open, save } from '@tauri-apps/api/dialog';
 import { documentDir } from '@tauri-apps/api/path';
 import { readTextFile, writeFile } from '@tauri-apps/api/fs';
+import { invoke } from '@tauri-apps/api';
 
 export const asciiFilter: DialogFilter = { name: 'Ascii', extensions: ['txt', 'dat'] };
 
@@ -47,3 +48,7 @@ export const initMenuListeners = async (): Promise<void> => {
         }
     });
 };
+
+export const getInitialData = async (): Promise<
+    [{ central_pixels: [number, number]; curve: [[number[], number[]], [number[], number[]]] }, number[][]]
+> => invoke('get_initial_data');
