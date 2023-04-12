@@ -1,10 +1,7 @@
-import Plot, { PlotParams } from 'react-plotly.js';
-import { FC } from 'react';
-import { Layout } from 'plotly.js';
-import merge from 'just-merge';
 import { Colors } from '@blueprintjs/core';
+import { Layout } from 'plotly.js';
 
-const blueprintLayout: Partial<Layout> = {
+export const blueprintLayout: Partial<Layout> = {
     autosize: true,
     font: {
         color: Colors.LIGHT_GRAY1,
@@ -36,7 +33,3 @@ const blueprintLayout: Partial<Layout> = {
     plot_bgcolor: 'transparent',
     paper_bgcolor: 'transparent',
 };
-
-export const StyledPlot: FC<PlotParams> = ({ layout = {}, ...props }) => (
-    <Plot {...props} useResizeHandler layout={merge(blueprintLayout, layout)} style={{ height: 'calc(100% - 40px)', width: '100%' }} />
-);
