@@ -1,4 +1,4 @@
-import { Card, Slider } from '@blueprintjs/core';
+import { Card } from '@blueprintjs/core';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { Visualizations } from '../../enums';
 import { Heatmap, Linechart } from './components';
@@ -42,16 +42,10 @@ export const Viz: FC<VizProps> = ({ viz }) => {
     return viz === Visualizations.CrossSections ? (
         <>
             <Card style={{ height: '50%' }}>
-                {yData.length > 0 && (
-                    <Slider value={y} onChange={updateYZCrossSection} min={0} max={yData.length - 1} stepSize={1} labelStepSize={yData.length / 10} />
-                )}
-                <Linechart xData={yData} yData={xzData} centralPixel={y} />
+                <Linechart xData={yData} yData={xzData} centralPixel={y} onMarkerDrag={updateYZCrossSection} />
             </Card>
             <Card style={{ height: '50%' }}>
-                {xData.length > 0 && (
-                    <Slider value={x} onChange={updateXZCrossSection} min={0} max={xData.length - 1} stepSize={1} labelStepSize={xData.length / 10} />
-                )}
-                <Linechart xData={xData} yData={yzData} centralPixel={x} />
+                <Linechart xData={xData} yData={yzData} centralPixel={x} onMarkerDrag={updateXZCrossSection} />
             </Card>
         </>
     ) : (
