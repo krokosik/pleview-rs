@@ -1,5 +1,5 @@
 import { FC, useCallback, useMemo, useRef } from 'react';
-import { Data } from 'plotly.js';
+import { Data, PlotMouseEvent } from 'plotly.js';
 import Plot from 'react-plotly.js';
 import { select } from 'd3-selection';
 import { D3DragEvent, drag } from 'd3-drag';
@@ -55,6 +55,15 @@ export const Linechart: FC<LinechartProps> = ({ xData, yData, centralPixel, onMa
         );
     }, [centralPixel, onMarkerDrag, xData.length]);
 
+    const onClick = useCallback(
+        ({ points: [point] }: PlotMouseEvent) => {
+            if (point && point.pointIndex !== centralPixel) {
+                onMarkerDrag?.(point.pointIndex);
+            }
+        },
+        [centralPixel, onMarkerDrag],
+    );
+
     return (
         <div style={{ height: '100%', width: '100%' }} ref={ref}>
             <Plot
@@ -62,11 +71,7 @@ export const Linechart: FC<LinechartProps> = ({ xData, yData, centralPixel, onMa
                 layout={layout}
                 useResizeHandler
                 style={{ height: '100%', width: '100%' }}
-                onClick={({ points: [point] }) => {
-                    if (point && point.pointIndex !== centralPixel) {
-                        onMarkerDrag?.(point.pointIndex);
-                    }
-                }}
+                onClick={onClick}
                 onAfterPlot={registerDrag}
             />
         </div>

@@ -1,5 +1,5 @@
 import { FC, useCallback, useMemo, useRef } from 'react';
-import { Data } from 'plotly.js';
+import { Data, PlotMouseEvent } from 'plotly.js';
 import Plot from 'react-plotly.js';
 import { select } from 'd3-selection';
 import { merge } from 'lodash';
@@ -66,6 +66,21 @@ export const Heatmap: FC<HeatmapProps> = ({ zGrid, xData, yData, centralPixelX, 
         );
     }, [centralPixelX, centralPixelY, onMarkerDragX, onMarkerDragY, xData.length, yData.length]);
 
+    const onClick = useCallback(
+        ({ points: [point] }: PlotMouseEvent) => {
+            if (point) {
+                const [pointIndexY, pointIndexX] = point.pointIndex as unknown as number[];
+                if (pointIndexX !== centralPixelX) {
+                    onMarkerDragX?.(pointIndexX);
+                }
+                if (pointIndexY !== centralPixelY) {
+                    onMarkerDragY?.(pointIndexY);
+                }
+            }
+        },
+        [centralPixelX, centralPixelY, onMarkerDragX, onMarkerDragY],
+    );
+
     return (
         <div ref={ref} style={{ height: '100%', width: '100%' }}>
             <Plot
@@ -73,17 +88,7 @@ export const Heatmap: FC<HeatmapProps> = ({ zGrid, xData, yData, centralPixelX, 
                 layout={layout}
                 useResizeHandler
                 style={{ height: '100%', width: '100%' }}
-                onClick={({ points: [point] }) => {
-                    if (point) {
-                        const [pointIndexY, pointIndexX] = point.pointIndex as unknown as number[];
-                        if (pointIndexX !== centralPixelX) {
-                            onMarkerDragX?.(pointIndexX);
-                        }
-                        if (pointIndexY !== centralPixelY) {
-                            onMarkerDragY?.(pointIndexY);
-                        }
-                    }
-                }}
+                onClick={onClick}
                 onAfterPlot={registerDrag}
             />
         </div>
