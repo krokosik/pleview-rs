@@ -20,8 +20,8 @@ export const Viz: FC<VizProps> = ({ viz }) => {
     useEffect(() => {
         void getInitialData().then(([csData, newZGrid]) => {
             setZGrid(newZGrid);
-            setX(csData.central_pixels[0]);
-            setY(csData.central_pixels[1]);
+            setX(csData.central_pixels[1]);
+            setY(csData.central_pixels[0]);
             setXData(csData.curve[0][0]);
             setYZData(csData.curve[0][1]);
             setYData(csData.curve[1][0]);
