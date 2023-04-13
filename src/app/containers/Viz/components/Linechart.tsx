@@ -1,10 +1,10 @@
 import { FC, useCallback, useMemo, useRef } from 'react';
-import { Data, Layout } from 'plotly.js';
+import { Data } from 'plotly.js';
 import Plot from 'react-plotly.js';
 import { select } from 'd3-selection';
 import { D3DragEvent, drag } from 'd3-drag';
 import { merge } from 'lodash';
-import { blueprintLayout } from '../common-layout';
+import { blueprintLayout, getShapeLayout, snapMarker } from '../../../utils';
 
 interface LinechartProps {
     xData: number[];
@@ -26,29 +26,7 @@ export const Linechart: FC<LinechartProps> = ({ xData, yData, centralPixel, onMa
 
     const [x0, x1] = snapMarker(centralPixel, xData);
 
-    const layout = useMemo(
-        () =>
-            merge({}, blueprintLayout, {
-                shapes: [
-                    {
-                        type: 'rect',
-                        xref: 'x',
-                        x0,
-                        x1,
-                        yref: 'paper',
-                        y0: 0,
-                        y1: 1,
-                        line: {
-                            color: 'rgb(55, 128, 191)',
-                            width: 1,
-                        },
-                        fillcolor: 'rgba(55, 128, 191, 0.6)',
-                    },
-                ],
-                hovermode: 'x',
-            } as Partial<Layout>),
-        [x0, x1],
-    );
+    const layout = useMemo(() => merge({}, blueprintLayout, { shapes: [getShapeLayout({ x0, x1 })] }), [x0, x1]);
 
     const registerDrag = useCallback(() => {
         const shape = select(ref.current).select('g.layer-above').select('g.shapelayer').select('path');
@@ -80,14 +58,6 @@ export const Linechart: FC<LinechartProps> = ({ xData, yData, centralPixel, onMa
                 }}
                 onAfterPlot={registerDrag}
             />
-            ;
         </div>
     );
-};
-
-const snapMarker = (x: number, xData: number[]): [number, number] => {
-    const x0 = x > 0 ? (xData[x - 1] + xData[x]) / 2 : 2 * xData[x] - xData[x + 1];
-    const x1 = x < xData.length - 1 ? (xData[x] + xData[x + 1]) / 2 : 2 * xData[x] - xData[x - 1];
-
-    return [x0, x1];
 };
