@@ -1,4 +1,4 @@
-import { Card, Slider } from '@blueprintjs/core';
+import { Card } from '@blueprintjs/core';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { Visualizations } from '../../enums';
 import { Heatmap, Linechart } from './components';
@@ -20,8 +20,8 @@ export const Viz: FC<VizProps> = ({ viz }) => {
     useEffect(() => {
         void getInitialData().then(([csData, newZGrid]) => {
             setZGrid(newZGrid);
-            setX(csData.central_pixels[0]);
-            setY(csData.central_pixels[1]);
+            setX(csData.central_pixels[1]);
+            setY(csData.central_pixels[0]);
             setXData(csData.curve[0][0]);
             setYZData(csData.curve[0][1]);
             setYData(csData.curve[1][0]);
@@ -42,21 +42,24 @@ export const Viz: FC<VizProps> = ({ viz }) => {
     return viz === Visualizations.CrossSections ? (
         <>
             <Card style={{ height: '50%' }}>
-                {yData.length > 0 && (
-                    <Slider value={y} onChange={updateYZCrossSection} min={0} max={yData.length} stepSize={1} labelStepSize={yData.length / 10} />
-                )}
-                <Linechart xData={yData} yData={xzData} />
+                <Linechart xData={xData} yData={yzData} centralPixel={x} onMarkerDrag={updateXZCrossSection} />
             </Card>
             <Card style={{ height: '50%' }}>
-                {xData.length > 0 && (
-                    <Slider value={x} onChange={updateXZCrossSection} min={0} max={xData.length} stepSize={1} labelStepSize={xData.length / 10} />
-                )}
-                <Linechart xData={xData} yData={yzData} />
+                <Linechart xData={yData} yData={xzData} centralPixel={y} onMarkerDrag={updateYZCrossSection} />
             </Card>
         </>
     ) : (
         <Card>
-            <Heatmap zGrid={zGrid} />
+            {/* The Plotly heatmap has inverted XY axes in comparison to legacy Pleview and the engine implementation */}
+            <Heatmap
+                zGrid={zGrid}
+                xData={yData}
+                yData={xData}
+                centralPixelX={y}
+                centralPixelY={x}
+                onMarkerDragX={updateYZCrossSection}
+                onMarkerDragY={updateXZCrossSection}
+            />
         </Card>
     );
 };

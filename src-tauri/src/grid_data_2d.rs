@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use std::cmp::min;
+use std::cmp::{min, max};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
@@ -90,29 +90,29 @@ impl GridData2D {
                 .collect();
 
             if i == 0 {
-                xs = line_values;
+                ys = line_values;
             } else {
-                ys.push(line_values[0]);
+                xs.push(line_values[0]);
                 values.extend_from_slice(&line_values[1..]);
             }
         }
 
-        Self::from(&xs, &ys, &values)
+        let mut new_values = Vec::with_capacity(values.len());
+        values.iter().enumerate().for_each(|(i, v)| {
+            let x = i % xs.len();
+            let y = i / xs.len();
+            new_values.push(values[x * ys.len() + y]);
+        });
+
+        Self::from(&xs, &ys, &new_values)
     }
 
     fn data_changed(&mut self) {
         // TODO: Rewritten directly, potential for refactor
         let mut already_sorted = true;
 
-        let mut new_x = Vec::with_capacity(self.x_data.vec.len());
-        let mut new_y = Vec::with_capacity(self.y_data.vec.len());
-
-        for (i, x) in self.x_data.vec.iter().enumerate() {
-            new_x.push((*x, i));
-        }
-        for (i, y) in self.y_data.vec.iter().enumerate() {
-            new_y.push((*y, i));
-        }
+        let mut new_x = self.x_data.vec.iter().enumerate().map(|(i, x)| (*x, i)).collect::<Vec<_>>();
+        let mut new_y = self.y_data.vec.iter().enumerate().map(|(i, y)| (*y, i)).collect::<Vec<_>>();
 
         new_x.sort_unstable_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
         new_y.sort_unstable_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
@@ -243,7 +243,7 @@ impl GridData2D {
     }
 
     pub fn get_1d_index_bounded(&self, nx: usize, ny: usize) -> Option<usize> {
-        self.get_1d_index(min(nx, self.cols() - 1), min(ny, self.rows() - 1))
+        self.get_1d_index(max(min(nx, self.cols() - 1), 0), max(min(ny, self.rows() - 1), 0))
     }
 
     pub fn get_value(&self, nx: usize, ny: usize) -> Option<f64> {
