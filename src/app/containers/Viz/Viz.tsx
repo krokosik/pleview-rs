@@ -42,10 +42,10 @@ export const Viz: FC<VizProps> = ({ viz }) => {
     return viz === Visualizations.CrossSections ? (
         <>
             <Card style={{ height: '50%' }}>
-                <Linechart xData={yData} yData={xzData} centralPixel={y} onMarkerDrag={updateYZCrossSection} />
+                <Linechart xData={xData} yData={yzData} centralPixel={x} onMarkerDrag={updateXZCrossSection} />
             </Card>
             <Card style={{ height: '50%' }}>
-                <Linechart xData={xData} yData={yzData} centralPixel={x} onMarkerDrag={updateXZCrossSection} />
+                <Linechart xData={yData} yData={xzData} centralPixel={y} onMarkerDrag={updateYZCrossSection} />
             </Card>
         </>
     ) : (
