@@ -26,7 +26,7 @@ export const Linechart: FC<LinechartProps> = ({ xData, yData, centralPixel, onMa
 
     const [x0, x1] = snapMarker(centralPixel, xData);
 
-    const layout = useMemo(() => merge({}, blueprintLayout, { shapes: [getShapeLayout({ x0, x1 })] }), [x0, x1]);
+    const layout = useMemo(() => merge({}, blueprintLayout, { shapes: [getShapeLayout({ x0, x1 })], hovermode: 'x' }), [x0, x1]);
 
     const registerDrag = useCallback(() => {
         const shape = select(ref.current).select('g.layer-above').select('g.shapelayer').select('path');

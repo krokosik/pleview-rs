@@ -50,7 +50,16 @@ export const Viz: FC<VizProps> = ({ viz }) => {
         </>
     ) : (
         <Card>
-            <Heatmap zGrid={zGrid} />
+            {/* The Plotly heatmap has inverted XY axes in comparison to legacy Pleview and the engine implementation */}
+            <Heatmap
+                zGrid={zGrid}
+                xData={yData}
+                yData={xData}
+                centralPixelX={y}
+                centralPixelY={x}
+                onMarkerDragX={updateYZCrossSection}
+                onMarkerDragY={updateXZCrossSection}
+            />
         </Card>
     );
 };
