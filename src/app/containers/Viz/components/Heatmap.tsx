@@ -4,7 +4,7 @@ import Plot from 'react-plotly.js';
 import { select } from 'd3-selection';
 import { merge } from 'lodash';
 import { D3DragEvent, drag } from 'd3-drag';
-import { blueprintLayout, getShapeLayout, snapMarker } from '../../../utils';
+import { blueprintLayout, getMarkerShapeLayout, snapMarker } from '../../../utils';
 
 interface HeatmapProps {
     xData: number[];
@@ -29,11 +29,25 @@ export const Heatmap: FC<HeatmapProps> = ({ zGrid, xData, yData, centralPixelX, 
     const [x0, x1] = snapMarker(centralPixelX, xData);
     const [y0, y1] = snapMarker(centralPixelY, yData);
 
-    const layout = useMemo(() => merge({}, blueprintLayout, { shapes: [getShapeLayout({ x0, x1 }), getShapeLayout({ y0, y1 })] }), [x0, x1, y0, y1]);
+    const layout = useMemo(
+        () =>
+            merge({}, blueprintLayout, {
+                shapes: [...getMarkerShapeLayout({ x0, x1, xData, yData }), ...getMarkerShapeLayout({ y0, y1, xData, yData })],
+            }),
+        [x0, x1, y0, y1, xData, yData],
+    );
 
     const registerDrag = useCallback(() => {
         const shape = select(ref.current).select('g.layer-above').select('g.shapelayer').selectAll('path');
-        shape.style('pointer-events', 'all').style('cursor', 'move');
+        shape
+            .style('pointer-events', 'all')
+            .style('cursor', 'move')
+            // eslint-disable-next-line func-names
+            .each(function (_, i) {
+                if (i % 2 === 0) {
+                    select(this).style('fill-opacity', '0.4');
+                }
+            });
         let closestIndexX = centralPixelX;
         let closestIndexY = centralPixelY;
         shape.call(

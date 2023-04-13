@@ -4,7 +4,7 @@ import Plot from 'react-plotly.js';
 import { select } from 'd3-selection';
 import { D3DragEvent, drag } from 'd3-drag';
 import { merge } from 'lodash';
-import { blueprintLayout, getShapeLayout, snapMarker } from '../../../utils';
+import { blueprintLayout, getMarkerShapeLayout, snapMarker } from '../../../utils';
 
 interface LinechartProps {
     xData: number[];
@@ -26,11 +26,22 @@ export const Linechart: FC<LinechartProps> = ({ xData, yData, centralPixel, onMa
 
     const [x0, x1] = snapMarker(centralPixel, xData);
 
-    const layout = useMemo(() => merge({}, blueprintLayout, { shapes: [getShapeLayout({ x0, x1 })], hovermode: 'x' }), [x0, x1]);
+    const layout = useMemo(
+        () => merge({}, blueprintLayout, { shapes: [...getMarkerShapeLayout({ x0, x1, xData, yData })], hovermode: 'x' }),
+        [x0, x1, xData, yData],
+    );
 
     const registerDrag = useCallback(() => {
-        const shape = select(ref.current).select('g.layer-above').select('g.shapelayer').select('path');
-        shape.style('pointer-events', 'all').style('cursor', 'ew-resize');
+        const shape = select(ref.current).select('g.layer-above').select('g.shapelayer').selectAll('path');
+        shape
+            .style('pointer-events', 'all')
+            .style('cursor', 'ew-resize')
+            // eslint-disable-next-line func-names
+            .each(function (_, i) {
+                if (i % 2 === 0) {
+                    select(this).style('fill-opacity', '0.4');
+                }
+            });
         let closestIndex = centralPixel;
         shape.call(
             // @ts-ignore - d3 typings are terrible, I don't think it's worth fixing
