@@ -14,6 +14,12 @@ pub struct Engine {
     original_data: Option<GridData2D>,
 }
 
+impl Default for Engine {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Engine {
     pub fn new() -> Self {
         Self {
