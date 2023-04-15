@@ -27,7 +27,8 @@
     "react-dom": "^18.0.0",
     "react-draggable": "^4.4.5",
     "react-plotly.js": "^2.6.0",
-    "react-redux": "^8.0.2"
+    "react-redux": "^8.0.2",
+    "tauri-plugin-log-api": "github:tauri-apps/tauri-plugin-log"
   },
   "devDependencies": {
     "@blueprintjs/eslint-plugin": "^2.0.1",
