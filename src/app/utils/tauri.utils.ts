@@ -1,8 +1,9 @@
-import { listen } from '@tauri-apps/api/event';
+import { UnlistenFn, listen } from '@tauri-apps/api/event';
 import { DialogFilter, message, open, save } from '@tauri-apps/api/dialog';
 import { documentDir } from '@tauri-apps/api/path';
 import { readTextFile, writeFile } from '@tauri-apps/api/fs';
 import { invoke } from '@tauri-apps/api';
+import { LogLevel, LogPayload } from '../models';
 
 export const asciiFilter: DialogFilter = { name: 'Ascii', extensions: ['txt', 'dat'] };
 
@@ -24,7 +25,7 @@ export const openFile = async (): Promise<string | null> => {
 
 export const saveFile = async (contents: string): Promise<void> => {
     const filePath = await save({ defaultPath: await documentDir(), filters: [asciiFilter] });
-    return writeFile({ path: filePath, contents });
+    return filePath ? writeFile({ path: filePath, contents }) : Promise.resolve();
 };
 
 export const initMenuListeners = async (): Promise<void> => {
@@ -48,6 +49,22 @@ export const initMenuListeners = async (): Promise<void> => {
         }
     });
 };
+
+export const onLog = (callback: (payload: LogPayload) => void, filterLevel: LogLevel = LogLevel.Trace): Promise<UnlistenFn> =>
+    listen('log://log', (event) => {
+        const payload = event.payload as LogPayload;
+
+        if (payload.level >= filterLevel) {
+            callback({
+                ...payload,
+                message: payload.message.replace(
+                    // eslint-disable-next-line no-control-regex
+                    /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
+                    '',
+                ),
+            });
+        }
+    });
 
 export const getInitialData = (): Promise<[{ central_pixels: [number, number]; curve: [[number[], number[]], [number[], number[]]] }, number[][]]> =>
     invoke('get_initial_data');
