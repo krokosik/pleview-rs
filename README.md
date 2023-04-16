@@ -24,4 +24,4 @@ The `pleview-old` contains the binaries for latest legacy PLEview versions. Vers
 
 The `pre-0.19` zip file on the other hand is the latest version that was created, but the source code was lost. It should be unpacked into the `Program Files (x86)` without installation.
 
-There is also a web page with tasks to be performed using PLEview (in Polish), which includes some examples use cases as well as test data, that can also be found in the `sample-data` directory.
+There is also a [web page](https://www.fuw.edu.pl/~tkaz/narzedzia/) with tasks to be performed using PLEview (in Polish), which includes some examples use cases as well as test data, that can also be found in the `sample-data` directory.
