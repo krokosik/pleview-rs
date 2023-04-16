@@ -7,10 +7,7 @@ import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { attachConsole, error, info } from 'tauri-plugin-log-api';
 import { App } from './app/containers/App';
-import { initMenuListeners } from './app/utils';
 import { store } from './store';
-
-void initMenuListeners();
 
 if (import.meta.env.DEV) {
     void attachConsole().then(() => info('Debug console attached'));

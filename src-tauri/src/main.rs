@@ -27,7 +27,6 @@ struct EngineState(Arc<Mutex<engine::Engine>>);
 fn main() {
     tauri::Builder::default()
     .invoke_handler(tauri::generate_handler![
-        get_initial_data,
         update_cross_section
         ])
         .menu(menu::create_menu())

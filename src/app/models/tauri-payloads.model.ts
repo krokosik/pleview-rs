@@ -10,3 +10,5 @@ export interface LogPayload {
     level: LogLevel;
     message: string;
 }
+
+export type DataPayload = [{ central_pixels: [number, number]; curve: [[number[], number[]], [number[], number[]]] }, number[][]];

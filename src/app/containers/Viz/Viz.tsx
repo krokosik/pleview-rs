@@ -2,7 +2,7 @@ import { Card } from '@blueprintjs/core';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { Visualizations } from '../../enums';
 import { Heatmap, Linechart } from './components';
-import { getInitialData, updateCrossSection } from '../../utils';
+import { listenToData, updateCrossSection } from '../../utils';
 
 interface VizProps {
     viz: Visualizations;
@@ -18,7 +18,8 @@ export const Viz: FC<VizProps> = ({ viz }) => {
     const [zGrid, setZGrid] = useState<number[][]>([]);
 
     useEffect(() => {
-        void getInitialData().then(([csData, newZGrid]) => {
+        let unlisten = () => {};
+        void listenToData(([csData, newZGrid]) => {
             setZGrid(newZGrid);
             setX(csData.central_pixels[1]);
             setY(csData.central_pixels[0]);
@@ -26,7 +27,10 @@ export const Viz: FC<VizProps> = ({ viz }) => {
             setYZData(csData.curve[0][1]);
             setYData(csData.curve[1][0]);
             setXZData(csData.curve[1][1]);
+        }).then((unlistenFn) => {
+            unlisten = unlistenFn;
         });
+        return () => unlisten();
     }, []);
 
     const updateXZCrossSection = useCallback((pixel: number) => {
