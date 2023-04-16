@@ -17,19 +17,19 @@ pub struct Engine {
 
 impl Default for Engine {
     fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl Engine {
-    pub fn new() -> Self {
-        trace!("Creating new engine object.");
         Self {
             axis_configurations: [AxisConfiguration::new(), AxisConfiguration::new()],
             cross_section: CrossSection::new(),
             data: None,
             original_data: None,
         }
+    }
+}
+
+impl Engine {
+    pub fn new() -> Self {
+        trace!("Creating new engine object.");
+        Self::default()
     }
 
     pub fn set_axis_configuration(
