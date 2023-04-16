@@ -2,6 +2,7 @@
 use std::cmp::{min, max};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use log::{trace, info, warn, error};
 
 #[derive(Clone, Debug)]
 pub struct DimensionData {
@@ -12,6 +13,7 @@ pub struct DimensionData {
 
 impl DimensionData {
     fn new() -> Self {
+        trace!("Creating new DimensionData object.");
         DimensionData {
             vec: Vec::new(),
             min: 0.0,
@@ -20,6 +22,7 @@ impl DimensionData {
     }
 
     pub fn from(vec: &[f64]) -> Self {
+        trace!("Creating new DimensionData object from vector. (length: {})", vec.len());
         let mut data = DimensionData::new();
         data.vec = vec.to_vec();
         data.find_limits();
@@ -56,6 +59,7 @@ pub struct GridData2D {
 impl GridData2D {
     pub fn from(xs: &[f64], ys: &[f64], values: &[f64]) -> Result<Self, String> {
         if xs.len() * ys.len() != values.len() {
+            error!("The number of values must be equal to the number of x times y values");
             return Err(
                 "The number of values must be equal to the number of x times y values".to_owned(),
             );
@@ -110,6 +114,7 @@ impl GridData2D {
     fn data_changed(&mut self) {
         // TODO: Rewritten directly, potential for refactor
         let mut already_sorted = true;
+        info!("Updating grid data.");
 
         let mut new_x = self.x_data.vec.iter().enumerate().map(|(i, x)| (*x, i)).collect::<Vec<_>>();
         let mut new_y = self.y_data.vec.iter().enumerate().map(|(i, y)| (*y, i)).collect::<Vec<_>>();
@@ -156,6 +161,7 @@ impl GridData2D {
     }
 
     fn calculate_cumulative(&mut self) {
+        info!("Caching cumulative data.");
         self.cumulative.clone_from(&self.values_data.vec);
 
         for i in 1..self.x_data.vec.len() {

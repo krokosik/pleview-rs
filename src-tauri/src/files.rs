@@ -1,4 +1,3 @@
-use crate::logger::Logger;
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader};
 use std::num::ParseFloatError;

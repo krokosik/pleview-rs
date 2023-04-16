@@ -5,6 +5,7 @@ use crate::cross_section::CrossSection;
 use crate::enums::Direction;
 use crate::grid_data_2d::GridData2D;
 
+use log::{trace, info, warn};
 use std::cmp::{max, min};
 
 pub struct Engine {
@@ -14,14 +15,21 @@ pub struct Engine {
     original_data: Option<GridData2D>,
 }
 
-impl Engine {
-    pub fn new() -> Self {
+impl Default for Engine {
+    fn default() -> Self {
         Self {
             axis_configurations: [AxisConfiguration::new(), AxisConfiguration::new()],
             cross_section: CrossSection::new(),
             data: None,
             original_data: None,
         }
+    }
+}
+
+impl Engine {
+    pub fn new() -> Self {
+        trace!("Creating new engine object.");
+        Self::default()
     }
 
     pub fn set_axis_configuration(
@@ -60,6 +68,7 @@ impl Engine {
         force_signal: bool,
     ) -> Result<(), String> {
         if central_pixel != self.cross_section.get_central_pixel(direction) || force_signal {
+            trace!("Setting cross section by pixel: {:?} {}", direction, central_pixel);
             self.cross_section
                 .set_central_pixel(direction, central_pixel)?;
         }
@@ -90,28 +99,32 @@ impl Engine {
     }
 
     pub fn load_data_from_matrix_file(&mut self, filepath: &str) -> Result<(), String> {
+        info!("Loading data from matrix file: {}", filepath);
         let data = GridData2D::from_matrix_file(filepath)?;
         self.set_data(data)
     }
 
     pub fn set_data(&mut self, data: GridData2D) -> Result<(), String> {
-        // TODO refactor this once I understand Rust smart pointers better
+        info!("Setting new data.");
         self.original_data = Some(data);
         self.data.clone_from(&self.original_data);
 
         self.cross_section.reset();
 
         self.broadcast_changes();
+        info!("Data set.");
         Ok(())
     }
 
     pub fn prepare_data(&mut self) -> Result<(), String> {
         self.data.clone_from(&self.original_data);
 
+        info!("Preparing X data.");
         let args = self.axis_configurations[Direction::X as usize]
             .values(self.original_data.as_ref().unwrap().x_values());
         self.data.as_mut().unwrap().set_x_values(args);
 
+        info!("Preparing Y data.");
         let args = self.axis_configurations[Direction::Y as usize]
             .values(self.original_data.as_ref().unwrap().y_values());
         self.data.as_mut().unwrap().set_y_values(args);
@@ -178,6 +191,7 @@ impl Engine {
 
     pub fn calculate_cross_section(&self, direction: Direction) -> Vec<[f64; 2]> {
         if self.data.is_none() {
+            warn!("Calculating cross section skipped due to no data.");
             return vec![];
         }
 
@@ -189,6 +203,7 @@ impl Engine {
                 Direction::Y => data.rows(),
             } <= self.cross_section.get_width(direction)
         {
+            warn!("Calculating cross section skipped due to width being larger than dimension size.");
             return vec![];
         }
 
@@ -196,6 +211,8 @@ impl Engine {
             Direction::X => (data.x_values(), data.y_values()),
             Direction::Y => (data.y_values(), data.x_values()),
         };
+
+        info!("Calculating cross section for direction: {:?}", direction);
 
         let width = self.cross_section.get_width(direction);
         let offset = width / 2;

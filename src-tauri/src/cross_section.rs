@@ -3,6 +3,7 @@
 use crate::enums::Direction;
 use std::cmp::max;
 use serde::Serialize;
+use log::{trace, info, warn, error};
 
 #[derive(Clone, Debug, Serialize)]
 pub struct CrossSection {
@@ -16,6 +17,7 @@ pub struct CrossSection {
 
 impl CrossSection {
     pub fn new() -> Self {
+        trace!("Creating new cross section object.");
         Self {
             central_pixels: [0, 0],
             width_in_pixels: [1, 1],
@@ -27,6 +29,7 @@ impl CrossSection {
     }
 
     pub fn reset(&mut self) {
+        trace!("Resetting cross section object.");
         for i in 0..1 {
             self.central_pixels[i] = 0;
             self.width_in_pixels[i] = 1;

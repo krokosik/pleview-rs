@@ -6,7 +6,7 @@ pub enum Contents {
     All = 7,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum Direction {
     X = 0,
     Y = 1,
