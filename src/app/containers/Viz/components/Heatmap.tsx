@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { blueprintLayout, getMarkerShapeLayout, snapMarker } from '../../../utils';
 import { colorScaleSelector } from '../../ColorScalePicker/color-scale.slice';
 import { ColorScalePoint } from '../../../models';
+import { useDebounce } from '../../../hooks';
 
 interface HeatmapProps {
     xData: number[];
@@ -23,7 +24,7 @@ export const Heatmap: FC<HeatmapProps> = ({ zGrid, xData, yData, centralPixelX, 
     const ref = useRef<HTMLDivElement | null>(null);
     const colorScale = useSelector(colorScaleSelector);
 
-    const colorscale = useMemo(() => colorScaleMapper(colorScale), [colorScale]);
+    const colorscale = useDebounce(colorScaleMapper(colorScale), 100);
     const data: Partial<Data> = useMemo(
         () => ({
             x: xData,
