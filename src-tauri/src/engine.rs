@@ -15,6 +15,8 @@ pub struct Engine {
     original_data: Option<GridData2D>,
 }
 
+type ZGrid = Vec<Vec<f64>>;
+
 impl Default for Engine {
     fn default() -> Self {
         Self {
@@ -57,7 +59,7 @@ impl Engine {
             }
         }
 
-        self.broadcast_changes();
+        self.update_cross_sections();
         Ok(())
     }
 
@@ -72,7 +74,7 @@ impl Engine {
             self.cross_section
                 .set_central_pixel(direction, central_pixel)?;
         }
-        self.broadcast_cross_section_changed(direction);
+        self.update_cross_section(direction);
         Ok(())
     }
 
@@ -98,22 +100,22 @@ impl Engine {
         self.set_cross_section_by_pixel(direction, central_pixel, force_signal)
     }
 
-    pub fn load_data_from_matrix_file(&mut self, filepath: PathBuf) -> Result<(), String> {
+    pub fn load_data_from_matrix_file(&mut self, filepath: PathBuf) -> Result<(CrossSection, ZGrid), String> {
         info!("Loading data from matrix file: {}", filepath.to_string_lossy());
         let data = GridData2D::from_matrix_file(filepath)?;
         self.set_data(data)
     }
 
-    pub fn set_data(&mut self, data: GridData2D) -> Result<(), String> {
+    pub fn set_data(&mut self, data: GridData2D) -> Result<(CrossSection, ZGrid), String> {
         info!("Setting new data.");
         self.original_data = Some(data);
         self.data.clone_from(&self.original_data);
 
         self.cross_section.reset();
 
-        self.broadcast_changes();
+        self.update_cross_sections();
         info!("Data set.");
-        Ok(())
+        Ok((self.get_current_cross_section().clone(), self.get_data().unwrap().get_z_grid()))
     }
 
     pub fn prepare_data(&mut self) -> Result<(), String> {
@@ -129,23 +131,22 @@ impl Engine {
             .values(self.original_data.as_ref().unwrap().y_values());
         self.data.as_mut().unwrap().set_y_values(args);
 
-        self.broadcast_changes();
+        self.update_cross_sections();
         Ok(())
     }
 
     pub fn set_cross_section_width(&mut self, direction: Direction, width: usize) {
         self.cross_section.set_width(direction, width);
-        self.broadcast_cross_section_changed(Direction::X);
-        self.broadcast_cross_section_changed(Direction::Y);
+        self.update_cross_section(Direction::X);
+        self.update_cross_section(Direction::Y);
     }
 
-    fn broadcast_changes(&mut self) {
-        // self.api.emit_data_changed(self.data.as_ref().unwrap());
-        self.broadcast_cross_section_changed(Direction::X);
-        self.broadcast_cross_section_changed(Direction::Y);
+    fn update_cross_sections(&mut self) {
+        self.update_cross_section(Direction::X);
+        self.update_cross_section(Direction::Y);
     }
 
-    fn broadcast_cross_section_changed(&mut self, direction: Direction) {
+    fn update_cross_section(&mut self, direction: Direction) {
         let curve = self.calculate_cross_section(direction).iter().map(|[x, y]| (*x, *y)).unzip();
         self.cross_section
             .set_curve(direction, [curve.0, curve.1]);
@@ -156,18 +157,6 @@ impl Engine {
         };
 
         self.cross_section.update_ranges(direction, horizontal);
-
-        // self.api.emit_cross_section_changed(&self.cross_section);
-        // self.api
-        //     .emit_central_pixel_changed(direction, self.cross_section.get_central_pixel(direction));
-        // self.api.emit_position_changed(
-        //     direction,
-        //     self.cross_section.get_position(direction),
-        //     self.cross_section.get_range_lower(direction),
-        //     self.cross_section.get_range_upper(direction),
-        // );
-        // self.api
-        //     .emit_curve_changed(direction, self.cross_section.get_curve(direction));
     }
 
     pub fn get_data(&self) -> Option<&GridData2D> {

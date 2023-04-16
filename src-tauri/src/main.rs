@@ -45,21 +45,6 @@ fn main() {
 }
 
 #[tauri::command]
-fn get_initial_data(
-    engine: tauri::State<'_, EngineState>,
-) -> Result<(cross_section::CrossSection, Vec<Vec<f64>>), String> {
-    let mut engine = engine.0.lock().unwrap();
-    let data = engine.get_data();
-    if data.is_none() {
-        warn!("Retrieving data from engine failed as there is no data loaded.");
-        return Err("No data loaded".to_string());
-    }
-    let z_grid = data.unwrap().get_z_grid();
-    let cs = engine.get_current_cross_section();
-    Ok((cs.clone(), z_grid))
-}
-
-#[tauri::command]
 fn update_cross_section(
     direction: usize,
     pixel: usize,

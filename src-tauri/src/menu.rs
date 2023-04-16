@@ -89,9 +89,10 @@ fn handle_import_ascii_matrix(event: WindowMenuEvent) {
         let state = event.window().state::<EngineState>();
         if let Some(path) = path {
             let mut engine = state.0.lock().unwrap();
-            if let Err(s) = engine.load_data_from_matrix_file(path) {
-                error!("Error loading data from file: {}", s);
-            }
+            match engine.load_data_from_matrix_file(path) {
+                Ok(payload) => event.window().emit("engine://data", Some(payload)).unwrap(),
+                Err(s) => error!("Error loading data from file: {}", s)
+            };
         }
     })
 }
