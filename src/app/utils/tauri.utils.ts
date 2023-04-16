@@ -1,5 +1,7 @@
 import { UnlistenFn, listen } from '@tauri-apps/api/event';
-import { DialogFilter } from '@tauri-apps/api/dialog';
+import { DialogFilter, open, save } from '@tauri-apps/api/dialog';
+import { documentDir } from '@tauri-apps/api/path';
+import { readTextFile, writeFile } from '@tauri-apps/api/fs';
 import { invoke } from '@tauri-apps/api';
 import { DataPayload, LogLevel, LogPayload } from '../models';
 
@@ -8,6 +10,23 @@ export const asciiFilter: DialogFilter = { name: 'Ascii', extensions: ['txt', 'd
 // @ts-ignore - This is a Tauri App
 // eslint-disable-next-line no-underscore-dangle
 export const isTauriApp = !!window.__TAURI__;
+
+export const openFile = async (): Promise<string | null> => {
+    const openResult = await open({ multiple: false, filters: [asciiFilter] });
+    const filePath = Array.isArray(openResult) ? openResult[0] ?? null : openResult;
+
+    if (filePath) {
+        // eslint-disable-next-line no-console
+        void readTextFile(filePath).then(console.log);
+    }
+
+    return filePath;
+};
+
+export const saveFile = async (contents: string): Promise<void> => {
+    const filePath = await save({ defaultPath: await documentDir(), filters: [asciiFilter] });
+    return filePath ? writeFile({ path: filePath, contents }) : Promise.resolve();
+};
 
 export const onLog = (callback: (payload: LogPayload) => void, filterLevel: LogLevel = LogLevel.Trace): Promise<UnlistenFn> =>
     listen('log://log', (event) => {
