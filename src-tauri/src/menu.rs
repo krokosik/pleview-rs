@@ -1,4 +1,8 @@
-use tauri::{CustomMenuItem, Menu, MenuItem, Submenu, WindowMenuEvent};
+use tauri::{CustomMenuItem, Menu, MenuItem, Submenu, WindowMenuEvent, Manager, Window};
+use tauri::api::dialog::FileDialogBuilder;
+use log::{error};
+
+use crate::EngineState;
 
 pub fn create_menu() -> Menu {
     Menu::new()
@@ -8,12 +12,11 @@ pub fn create_menu() -> Menu {
 }
 
 pub fn menu_event_handler(event: WindowMenuEvent) {
-    let _window = event.window();
-
     match event.menu_item_id() {
         "open" => println!("Open"),
         "save" => println!("Save"),
         "save_as" => println!("Save as"),
+        "import_ascii_matrix" => handle_import_ascii_matrix(event),
         _ => {}
     };
 }
@@ -42,7 +45,7 @@ fn create_file_submenu() -> Submenu {
 }
 
 fn create_import_submenu() -> Submenu {
-    let ascii = CustomMenuItem::new("import_ascii".to_string(), "ASCII");
+    let ascii = CustomMenuItem::new("import_ascii_matrix".to_string(), "ASCII matrix with XY labels");
     let itex = CustomMenuItem::new("import_itex".to_string(), "ITEX");
 
     Submenu::new("Import", Menu::new().add_item(ascii).add_item(itex))
@@ -79,4 +82,16 @@ fn create_help_submenu() -> Submenu {
     let about = CustomMenuItem::new("about".to_string(), "About");
 
     Submenu::new("Help", Menu::new().add_item(about))
+}
+
+fn handle_import_ascii_matrix(event: WindowMenuEvent) {
+    FileDialogBuilder::new().add_filter("Ascii", ["txt", "asc", "dat"].as_ref()).pick_file(move |path| {
+        let state = event.window().state::<EngineState>();
+        if let Some(path) = path {
+            let mut engine = state.0.lock().unwrap();
+            if let Err(s) = engine.load_data_from_matrix_file(path) {
+                error!("Error loading data from file: {}", s);
+            }
+        }
+    })
 }

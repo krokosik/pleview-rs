@@ -21,20 +21,14 @@ mod files;
 mod grid_data_2d;
 mod menu;
 
+#[derive(Default)]
 struct EngineState(Arc<Mutex<engine::Engine>>);
 
 fn main() {
-    let mut engine = engine::Engine::new();
-    if let Err(s) = engine.load_data_from_matrix_file("..\\sample-data\\microwaves_OFF.asc") {
-        eprintln!("{}", s);
-    }
-    let state: EngineState = EngineState(Arc::new(Mutex::new(engine)));
-
     tauri::Builder::default()
-        .manage(state)
-        .invoke_handler(tauri::generate_handler![
-            get_initial_data,
-            update_cross_section
+    .invoke_handler(tauri::generate_handler![
+        get_initial_data,
+        update_cross_section
         ])
         .menu(menu::create_menu())
         .on_menu_event(menu::menu_event_handler)
@@ -44,7 +38,8 @@ fn main() {
                 .level_for("tauri", LevelFilter::Info)
                 .level_for("hyper", LevelFilter::Info)
                 .build(),
-        )
+            )
+        .manage(EngineState::default())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

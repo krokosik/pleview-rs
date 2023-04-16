@@ -6,7 +6,7 @@ use crate::enums::Direction;
 use crate::grid_data_2d::GridData2D;
 
 use log::{trace, info, warn};
-use std::cmp::{max, min};
+use std::{cmp::{max, min}, path::PathBuf};
 
 pub struct Engine {
     axis_configurations: [AxisConfiguration; 2],
@@ -98,8 +98,8 @@ impl Engine {
         self.set_cross_section_by_pixel(direction, central_pixel, force_signal)
     }
 
-    pub fn load_data_from_matrix_file(&mut self, filepath: &str) -> Result<(), String> {
-        info!("Loading data from matrix file: {}", filepath);
+    pub fn load_data_from_matrix_file(&mut self, filepath: PathBuf) -> Result<(), String> {
+        info!("Loading data from matrix file: {}", filepath.to_string_lossy());
         let data = GridData2D::from_matrix_file(filepath)?;
         self.set_data(data)
     }

@@ -2,6 +2,7 @@
 use std::cmp::{min, max};
 use std::fs::File;
 use std::io::{BufRead, BufReader};
+use std::path::PathBuf;
 use log::{trace, info, warn, error};
 
 #[derive(Clone, Debug)]
@@ -77,7 +78,7 @@ impl GridData2D {
         Ok(grid)
     }
 
-    pub fn from_matrix_file(filepath: &str) -> Result<Self, String> {
+    pub fn from_matrix_file(filepath: PathBuf) -> Result<Self, String> {
         let mut xs = Vec::new();
         let mut ys = Vec::new();
         let mut values = Vec::new();
