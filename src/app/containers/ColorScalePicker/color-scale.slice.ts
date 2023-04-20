@@ -17,9 +17,9 @@ const colorScaleSlice = createSlice({
         colorInput: '#0f0',
         ids: ['0', '1', '2'],
         entities: {
-            '0': { id: '0', color: '#ff0000', offset: 0 },
-            '1': { id: '1', color: '#00ff00', offset: 0.5 },
-            '2': { id: '2', color: '#0000ff', offset: 0.99 },
+            '0': { id: '0', color: '#0000ff', offset: 0 },
+            '1': { id: '1', color: '#00ff00', offset: 0.33 },
+            '2': { id: '2', color: '#ff0000', offset: 0.99 },
         },
     }),
     reducers: {

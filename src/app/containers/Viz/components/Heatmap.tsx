@@ -1,10 +1,14 @@
 import { FC, useCallback, useMemo, useRef } from 'react';
-import Plotly, { Data, PlotMouseEvent } from 'plotly.js';
+import Plotly, { ColorScale, Data, PlotMouseEvent } from 'plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
 import { select } from 'd3-selection';
 import { merge } from 'lodash';
 import { D3DragEvent, drag } from 'd3-drag';
+import { useSelector } from 'react-redux';
 import { blueprintLayout, getMarkerShapeLayout, snapMarker } from '../../../utils';
+import { colorScaleSelector } from '../../ColorScalePicker/color-scale.slice';
+import { ColorScalePoint } from '../../../models';
+import { useDebounce } from '../../../hooks';
 
 const Plot = createPlotlyComponent(Plotly);
 
@@ -20,13 +24,19 @@ interface HeatmapProps {
 
 export const Heatmap: FC<HeatmapProps> = ({ zGrid, xData, yData, centralPixelX, centralPixelY, onMarkerDragX, onMarkerDragY }) => {
     const ref = useRef<HTMLDivElement | null>(null);
+    const colorScale = useSelector(colorScaleSelector);
 
-    const data: Partial<Data> = {
-        x: xData,
-        y: yData,
-        z: zGrid,
-        type: 'heatmap',
-    };
+    const colorscale = useDebounce(colorScaleMapper(colorScale), 100);
+    const data: Partial<Data> = useMemo(
+        () => ({
+            x: xData,
+            y: yData,
+            z: zGrid,
+            type: 'heatmap',
+        }),
+        [xData, yData, zGrid],
+    );
+    data.colorscale = colorscale;
 
     const [x0, x1] = snapMarker(centralPixelX, xData);
     const [y0, y1] = snapMarker(centralPixelY, yData);
@@ -95,4 +105,19 @@ export const Heatmap: FC<HeatmapProps> = ({ zGrid, xData, yData, centralPixelX, 
             />
         </div>
     );
+};
+
+const colorScaleMapper = (colorScale: ColorScalePoint[]): ColorScale | string => {
+    if (colorScale.length === 0) {
+        return 'RdBu';
+    }
+
+    const result = colorScale.map(({ offset, color }) => [offset, color] as const);
+    if (result[0][0] !== 0) {
+        result.unshift([0, result[0][1]]);
+    }
+    if (result[result.length - 1][0] !== 1) {
+        result.push([1, result[result.length - 1][1]]);
+    }
+    return result as ColorScale;
 };
