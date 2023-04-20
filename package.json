@@ -7,7 +7,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "postinstall": "npm --prefix node_modules/plotly.js i && npm --prefix node_modules/plotly.js run custom-bundle -- --traces scatter,scattergl,heatmap"
+    "postinstall": "npm --prefix node_modules/plotly.js i && npm --prefix node_modules/plotly.js run custom-bundle -- --traces scatter,scattergl,heatmap --transforms none --srict"
   },
   "dependencies": {
     "@blueprintjs/core": "^4.4.0",
