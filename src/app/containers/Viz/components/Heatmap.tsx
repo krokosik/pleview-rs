@@ -1,6 +1,6 @@
 import { FC, useCallback, useMemo, useRef } from 'react';
-import { Data, PlotMouseEvent, ColorScale } from 'plotly.js';
-import Plot from 'react-plotly.js';
+import Plotly, { ColorScale, Data, PlotMouseEvent } from 'plotly.js';
+import createPlotlyComponent from 'react-plotly.js/factory';
 import { select } from 'd3-selection';
 import { merge } from 'lodash';
 import { D3DragEvent, drag } from 'd3-drag';
@@ -9,6 +9,8 @@ import { blueprintLayout, getMarkerShapeLayout, snapMarker } from '../../../util
 import { colorScaleSelector } from '../../ColorScalePicker/color-scale.slice';
 import { ColorScalePoint } from '../../../models';
 import { useDebounce } from '../../../hooks';
+
+const Plot = createPlotlyComponent(Plotly);
 
 interface HeatmapProps {
     xData: number[];
